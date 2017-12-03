@@ -1,0 +1,11 @@
+<div class="row">
+  <div class="col-lg-12">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Dashboard</li>
+      </ol>
+    </nav>
+    <trip-card class="card mb-3" [title]="'Current Trip'" [trips]="currentTrips"></trip-card>
+    <trip-card class="card mb-3" [title]="'Recent Trips'" [trips]="completedTrips"></trip-card>
+  </div>
+</div>
