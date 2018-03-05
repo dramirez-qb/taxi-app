@@ -42,11 +42,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'taxi.urls'
 
+AUTH_USER_MODEL = 'trip.User'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'www/app/dist'),
+            os.path.join(BASE_DIR, 'taxi-ui/dist'),
         ],
         'APP_DIRS': False,
         'OPTIONS': {
@@ -62,10 +64,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'taxi.asgi.application'
 
+ASGI_APPLICATION = 'taxi.routing.application'
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASS'),
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
@@ -97,8 +105,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'www/app/dist'),
+    os.path.join(BASE_DIR, 'taxi-ui/dist'),
 )
+
+MEDIA_ROOT = 'media'
+
+MEDIA_URL = '/media/'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -109,12 +121,17 @@ REST_FRAMEWORK = {
 REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
 
 CHANNEL_LAYERS = {
+    # 'default': {
+    #     'BACKEND': 'channels_redis.core.RedisChannelLayer',
+    #     'CONFIG': {
+    #         'hosts': [REDIS_URL],
+    #     },
+    # },
     'default': {
-        'BACKEND': 'asgi_redis.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [REDIS_URL],
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        'TEST_CONFIG': {
+            'expiry': 100500,
         },
-        'ROUTING': 'taxi.routing.channel_routing',
     },
 }
 

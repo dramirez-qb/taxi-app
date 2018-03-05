@@ -1,8 +1,12 @@
-from channels import route_class
-from trip.consumers import DriverConsumer, RiderConsumer
+from django.urls import path
+from channels.routing import ProtocolTypeRouter, URLRouter
+from .auth import TokenAuthMiddleware
+from trip.consumers import TaxiConsumer
 
-
-channel_routing = [
-    route_class(DriverConsumer, path=r'^/driver/$'),
-    route_class(RiderConsumer, path=r'^/rider/$'),
-]
+application = ProtocolTypeRouter({
+    'websocket': TokenAuthMiddleware(
+        URLRouter([
+            path('taxi/', TaxiConsumer),
+        ])
+    )
+})
