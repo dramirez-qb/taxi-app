@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs/Rx';
 import { Trip } from '../models/trip';
 import { User } from '../models/user';
-import { AuthService } from './auth.service';
 
 const BASE_URL: string = 'http://localhost:8000/api';
 
@@ -12,30 +11,26 @@ export class TripService {
   webSocket: Subject<string>;
   messages: Observable<Object>;
   constructor(
-    private http: HttpClient,
-    private authService: AuthService
+    private http: HttpClient
   ) {
-    this.webSocket = Observable.webSocket(`ws://localhost:8000/${User.getGroup()}/`);
+    let user: User = User.getUser();
+    this.webSocket = Observable.webSocket(`ws://localhost:8000/${user.group}/`);
     this.messages = this.webSocket.share();
-    this.messages.subscribe(message => {
-      console.log('From trip service:', message);
-    });
+    this.messages.subscribe(message => console.log(message));
   }
-
   getTrips(): Observable<Trip[]> {
-    let url: string = `${BASE_URL}/trip/`;
-    return this.http.get<Trip[]>(url);
+    return this.http.get<Trip[]>(`${BASE_URL}/trip/`)
+      .map(trips => {
+        return trips.map(trip => Trip.create(trip));
+      });
   }
-
-  getTrip(nk: string): Observable<Trip> {
-    let url: string = `${BASE_URL}/trip/${nk}/`;
-    return this.http.get<Trip>(url);
-  }
-
   createTrip(trip: Trip): void {
     this.webSocket.next(JSON.stringify(trip));
   }
-
+  getTrip(nk: string): Observable<Trip> {
+    return this.http.get<Trip>(`${BASE_URL}/trip/${nk}/`)
+      .map(trip => Trip.create(trip));
+  }
   updateTrip(trip: Trip): void {
     this.webSocket.next(JSON.stringify(trip));
   }

@@ -4,9 +4,9 @@
   <div class="card-body">
     <ul class="list-unstyled">
       <li class="media mb-3" [routerLink]="['.', trip.nk]" *ngFor="let trip of trips">
-        <img class="mr-3 rounded-circle" [src]="trip.otherUser?.photo" width="80" height="80">
+        <img class="mr-3 rounded-circle" [src]="trip.otherUser.photo" width="80" height="80">
         <div class="media-body">
-          <h5 class="mt-0 mb-1">{{ trip.otherUser?.username || 'Waiting...' }}</h5>
+          <h5 class="mt-0 mb-1">{{ trip.otherUser.fullName }}</h5>
           {{ trip.pick_up_address }} to {{ trip.drop_off_address }}<br>
           {{ trip.status }}
         </div>
