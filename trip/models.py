@@ -23,8 +23,10 @@ class Trip(models.Model):
     pick_up_address = models.CharField(max_length=255)
     drop_off_address = models.CharField(max_length=255)
     status = models.CharField(max_length=20, choices=TRIP_STATUSES, default=REQUESTED)
-    driver = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='trips_as_driver')
-    rider = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='trips_as_rider')
+    driver = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='trips_as_driver',
+                               on_delete=models.CASCADE)
+    rider = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='trips_as_rider',
+                              on_delete=models.CASCADE)
 
     def save(self, **kwargs):
         if not self.nk:

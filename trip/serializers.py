@@ -5,7 +5,11 @@ from .models import Trip
 
 class PublicUserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(validators=[lambda value: value])
-    groups = serializers.SlugRelatedField(slug_field='name', many=True, read_only=True)
+    # groups = serializers.SlugRelatedField(slug_field='name', many=True, read_only=True)
+    group = serializers.SerializerMethodField()
+
+    def get_group(self, obj):
+        return obj.groups.first().name
 
     def create(self, validated_data):
         pass
@@ -15,7 +19,7 @@ class PublicUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'groups',)
+        fields = ('id', 'username', 'group',)
 
 
 class PrivateUserSerializer(PublicUserSerializer):

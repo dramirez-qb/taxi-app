@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 
 // Services.
 import { AuthService } from './services/auth.service';
+import { GoogleMapsService } from './services/google-maps.service';
 import { IsDriver } from './services/is-driver.service';
 import { IsRider } from './services/is-rider.service';
 import { TokenInterceptor } from './services/token.interceptor';
@@ -30,6 +31,7 @@ import { TripCardComponent } from './components/trip-card/trip-card.component';
 
 import { routes } from './routes';
 
+import { AgmCoreModule } from '@agm/core';
 import { ToastyConfig, ToastyModule, ToastyService } from 'ng2-toasty';
 
 @NgModule({
@@ -52,10 +54,14 @@ import { ToastyConfig, ToastyModule, ToastyService } from 'ng2-toasty';
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot(routes),
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyC_C5bF7OJBV_aORb0xY5kkJ4HXE6LxFJU'
+    }),
     ToastyModule.forRoot()
   ],
   providers: [
     AuthService,
+    GoogleMapsService,
     IsDriver,
     IsRider,
     TripListResolver,
