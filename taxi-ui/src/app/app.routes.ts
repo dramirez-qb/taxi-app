@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
 
+// Resolvers.
+import { TripDetailResolver } from './resolvers/trip-detail.resolver';
+import { TripListResolver } from './resolvers/trip-list.resolver';
+
 // Services.
 import { IsDriver } from './services/is-driver.service';
 import { IsRider } from './services/is-rider.service';
-import { TripDetailResolver } from './services/trip-detail.resolver';
-import { TripListResolver } from './services/trip-list.resolver';
 
 // Components.
 import { AppComponent } from './app.component';

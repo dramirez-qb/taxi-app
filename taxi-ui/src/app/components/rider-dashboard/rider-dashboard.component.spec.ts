@@ -11,7 +11,7 @@ import { AppComponent } from '../../app.component';
 import { RiderDashboardComponent } from './rider-dashboard.component';
 import { IsRider } from '../../services/is-rider.service';
 import { Trip } from '../../models/trip';
-import { TripListResolver } from '../../services/trip-list.resolver';
+import { TripListResolver } from '../../resolvers/trip-list.resolver';
 import { TripService } from '../../services/trip.service';
 
 xdescribe('RiderDashboardComponent', () => {

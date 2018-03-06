@@ -5,14 +5,16 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
+// Resolvers.
+import { TripDetailResolver } from './resolvers/trip-detail.resolver';
+import { TripListResolver } from './resolvers/trip-list.resolver';
+
 // Services.
 import { AuthService } from './services/auth.service';
 import { GoogleMapsService } from './services/google-maps.service';
 import { IsDriver } from './services/is-driver.service';
 import { IsRider } from './services/is-rider.service';
 import { TokenInterceptor } from './services/token.interceptor';
-import { TripDetailResolver } from './services/trip-detail.resolver';
-import { TripListResolver } from './services/trip-list.resolver';
 import { TripService } from './services/trip.service';
 
 // Components.
