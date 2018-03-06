@@ -29,7 +29,7 @@ import { RiderRequestComponent } from './components/rider-request/rider-request.
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { TripCardComponent } from './components/trip-card/trip-card.component';
 
-import { routes } from './routes';
+import { ROUTES } from './routes';
 
 import { AgmCoreModule } from '@agm/core';
 import { ToastyConfig, ToastyModule, ToastyService } from 'ng2-toasty';
@@ -53,7 +53,7 @@ import { ToastyConfig, ToastyModule, ToastyService } from 'ng2-toasty';
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    RouterModule.forRoot(routes),
+    RouterModule.forRoot(ROUTES, { useHash: true }),
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyC_C5bF7OJBV_aORb0xY5kkJ4HXE6LxFJU'
     }),
