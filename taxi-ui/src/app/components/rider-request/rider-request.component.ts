@@ -5,11 +5,13 @@ import { User } from '../../models/user';
 import { GoogleMapsService } from '../../services/google-maps.service';
 import { TripService } from '../../services/trip.service';
 
-interface Marker {
-  lat: number;
-  lng: number;
-  label?: string;
-  draggable: boolean;
+class Marker {
+  constructor(
+    public lat: number,
+    public lng: number,
+    public draggable: boolean,
+    public label?: string
+  ) {}
 }
 
 @Component({
@@ -20,9 +22,9 @@ interface Marker {
 export class RiderRequestComponent implements OnInit {
   lat: number = 0;
   lng: number = 0;
+  zoom: number = 13;
   markers: Marker[];
   trip: Trip = new Trip();
-  zoom: number = 13;
   constructor(
     private googleMapsService: GoogleMapsService,
     private router: Router,
@@ -30,15 +32,11 @@ export class RiderRequestComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(position => {
+      navigator.geolocation.getCurrentPosition((position: Position) => {
         this.lat = position.coords.latitude;
         this.lng = position.coords.longitude;
         this.markers = [
-          {
-            lat: this.lat,
-            lng: this.lng,
-            draggable: false
-          }
+          new Marker(this.lat, this.lng, false)
         ];
       });
     }
