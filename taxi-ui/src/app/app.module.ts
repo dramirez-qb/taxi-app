@@ -32,6 +32,7 @@ import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { TripCardComponent } from './components/trip-card/trip-card.component';
 
 import { ROUTES } from './app.routes';
+import { environment } from '../environments/environment';
 
 import { AgmCoreModule } from '@agm/core';
 import { ToastyConfig, ToastyModule, ToastyService } from 'ng2-toasty';
@@ -57,7 +58,7 @@ import { ToastyConfig, ToastyModule, ToastyService } from 'ng2-toasty';
     HttpClientModule,
     RouterModule.forRoot(ROUTES, { useHash: true }),
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyC_C5bF7OJBV_aORb0xY5kkJ4HXE6LxFJU'
+      apiKey: environment.GOOGLE_API_KEY
     }),
     ToastyModule.forRoot()
   ],
