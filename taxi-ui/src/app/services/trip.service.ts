@@ -4,10 +4,9 @@ import { Observable, Subject } from 'rxjs/Rx';
 import { Trip } from '../models/trip';
 import { User } from '../models/user';
 
-const BASE_URL: string = 'http://localhost:8000/api';
-
 @Injectable()
 export class TripService {
+  private BASE_URL: string = 'http://localhost:8000/api';
   webSocket: Subject<string>;
   messages: Observable<Object>;
   constructor(
@@ -19,7 +18,7 @@ export class TripService {
     this.messages.subscribe(message => console.log(message));
   }
   getTrips(): Observable<Trip[]> {
-    return this.http.get<Trip[]>(`${BASE_URL}/trip/`)
+    return this.http.get<Trip[]>(`${this.BASE_URL}/trip/`)
       .map(trips => {
         return trips.map(trip => Trip.create(trip));
       });
@@ -28,7 +27,7 @@ export class TripService {
     this.webSocket.next(JSON.stringify(trip));
   }
   getTrip(nk: string): Observable<Trip> {
-    return this.http.get<Trip>(`${BASE_URL}/trip/${nk}/`)
+    return this.http.get<Trip>(`${this.BASE_URL}/trip/${nk}/`)
       .map(trip => Trip.create(trip));
   }
   updateTrip(trip: Trip): void {
