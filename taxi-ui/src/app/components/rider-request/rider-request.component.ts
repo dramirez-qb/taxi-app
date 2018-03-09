@@ -9,7 +9,6 @@ class Marker {
   constructor(
     public lat: number,
     public lng: number,
-    public draggable: boolean,
     public label?: string
   ) {}
 }
@@ -36,7 +35,7 @@ export class RiderRequestComponent implements OnInit {
         this.lat = position.coords.latitude;
         this.lng = position.coords.longitude;
         this.markers = [
-          new Marker(this.lat, this.lng, false)
+          new Marker(this.lat, this.lng)
         ];
       });
     }
@@ -60,18 +59,15 @@ export class RiderRequestComponent implements OnInit {
           {
             lat: leg.start_location.lat(),
             lng: leg.start_location.lng(),
-            label: 'A',
-            draggable: false
+            label: 'A'
           },
           {
             lat: leg.end_location.lat(),
             lng: leg.end_location.lng(),
-            label: 'B',
-            draggable: false
+            label: 'B'
           }
         ];
-        this.zoom = 13;
-      });
+      } );
     }
   }
 }

@@ -1,4 +1,3 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
@@ -6,8 +5,11 @@ declare var google: any;
 
 @Injectable()
 export class GoogleMapsService {
-  constructor(private http: HttpClient) {}
-  directions(pick_up_address: string, drop_off_address: string): Observable<any> {
+  constructor() {}
+  directions(
+    pick_up_address: string,
+    drop_off_address: string
+  ): Observable<any> {
     let request: any = {
       origin: pick_up_address,
       destination: drop_off_address,
