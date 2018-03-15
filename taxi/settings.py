@@ -121,18 +121,18 @@ REST_FRAMEWORK = {
 REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
 
 CHANNEL_LAYERS = {
-    # 'default': {
-    #     'BACKEND': 'channels_redis.core.RedisChannelLayer',
-    #     'CONFIG': {
-    #         'hosts': [REDIS_URL],
-    #     },
-    # },
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-        'TEST_CONFIG': {
-            'expiry': 100500,
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [REDIS_URL],
         },
     },
+    # 'default': {
+    #     'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    #     'TEST_CONFIG': {
+    #         'expiry': 100500,
+    #     },
+    # },
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
