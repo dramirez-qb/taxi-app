@@ -19,7 +19,7 @@ describe('AuthService', () => {
     let responseData = {
       id: 1,
       username: 'rider@example.com',
-      groups: ['rider']
+      group: 'rider'
     };
     authService.signUp('rider@example.com', 'pAssw0rd!', 'rider').subscribe(data => {
       expect(data).toEqual(responseData);
@@ -32,7 +32,7 @@ describe('AuthService', () => {
     let responseData = {
       id: 1,
       username: 'rider@example.com',
-      groups: ['rider'],
+      group: 'rider',
       auth_token: '2df504b532e39a49e05b08b8ba718f7a327b8f76'
     };
     authService.logIn('rider@example.com', 'pAssw0rd!').subscribe(data => {

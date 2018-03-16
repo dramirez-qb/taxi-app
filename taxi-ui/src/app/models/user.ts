@@ -2,7 +2,7 @@ export class User {
   constructor(
     public id?: number,
     public username?: string,
-    public groups?: Array<string>,
+    public group?: string,
     public auth_token?: string
   ) {}
   static getUser(): User {
@@ -17,20 +17,20 @@ export class User {
     if (user === null) {
       return null;
     }
-    return user.groups[0];
+    return user.group;
   }
   static isRider(): boolean {
     let user: User = User.getUser();
     if (user === null) {
       return false;
     }
-    return user.groups[0] === 'rider';
+    return user.group === 'rider';
   }
   static isDriver(): boolean {
     let user: User = User.getUser();
     if (user === null) {
       return false;
     }
-    return user.groups[0] === 'driver';
+    return user.group === 'driver';
   }
 }

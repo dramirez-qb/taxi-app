@@ -31,13 +31,14 @@
     "jquery": "^3.2.1",
     "lodash": "^4.17.4",
     "moment": "^2.19.1",
-    "ng2-toasty": "^4.0.3",
+    "ng2-toastr": "^4.1.2",
+    "npm": "^5.7.1",
     "popper.js": "^1.12.6",
     "rxjs": "^5.5.2",
     "zone.js": "^0.8.14"
   },
   "devDependencies": {
-    "@angular/cli": "^1.5.0",
+    "@angular/cli": "^1.7.3",
     "@angular/compiler-cli": "^4.0.0",
     "@angular/language-service": "^4.0.0",
     "@types/jasmine": "~2.5.53",

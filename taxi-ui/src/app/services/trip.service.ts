@@ -10,7 +10,7 @@ const BASE_URL: string = 'http://localhost:8000/api';
 @Injectable()
 export class TripService {
   webSocket: Subject<string>;
-  messages: Observable<Object>;
+  messages: Observable<any>;
   constructor(
     private http: HttpClient,
     private authService: AuthService
@@ -33,10 +33,18 @@ export class TripService {
   }
 
   createTrip(trip: Trip): void {
-    this.webSocket.next(JSON.stringify(trip));
+    let message: any = {
+      type: 'create.trip',
+      data: trip
+    };
+    this.webSocket.next(JSON.stringify(message));
   }
 
   updateTrip(trip: Trip): void {
-    this.webSocket.next(JSON.stringify(trip));
+    let message: any = {
+      type: 'update.trip',
+      data: trip
+    };
+    this.webSocket.next(JSON.stringify(message));
   }
 }

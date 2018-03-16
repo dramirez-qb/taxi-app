@@ -36,7 +36,7 @@ xdescribe('RiderRequestComponent', () => {
     localStorage.setItem('taxi.user', JSON.stringify({
       id: 1,
       username: 'Rider',
-      groups: ['rider'],
+      group: 'rider',
       auth_token: ''
     }));
     component.trip = new Trip(1);

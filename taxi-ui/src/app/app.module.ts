@@ -3,6 +3,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 
 // Services.
@@ -30,7 +31,7 @@ import { TripCardComponent } from './components/trip-card/trip-card.component';
 
 import { routes } from './routes';
 
-import { ToastyConfig, ToastyModule, ToastyService } from 'ng2-toasty';
+import { ToastModule } from 'ng2-toastr/ng2-toastr';
 
 @NgModule({
   declarations: [
@@ -49,10 +50,11 @@ import { ToastyConfig, ToastyModule, ToastyService } from 'ng2-toasty';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
-    RouterModule.forRoot(routes),
-    ToastyModule.forRoot()
+    RouterModule.forRoot(routes, { useHash: true }),
+    ToastModule.forRoot()
   ],
   providers: [
     AuthService,
@@ -65,9 +67,7 @@ import { ToastyConfig, ToastyModule, ToastyService } from 'ng2-toasty';
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
-    },
-    ToastyConfig,
-    ToastyService
+    }
   ],
   bootstrap: [ AppComponent ]
 })

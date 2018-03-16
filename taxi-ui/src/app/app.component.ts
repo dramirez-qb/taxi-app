@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { ToastyConfig } from 'ng2-toasty';
+import { Component, ViewContainerRef } from '@angular/core';
+
+import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,10 @@ import { ToastyConfig } from 'ng2-toasty';
 
 export class AppComponent {
   title = 'app';
-  constructor(private toastyConfig: ToastyConfig) {
-    this.toastyConfig.theme = 'bootstrap';
+  constructor(
+    private toastsManager: ToastsManager,
+    private viewContainerRef: ViewContainerRef
+  ) {
+    this.toastsManager.setRootViewContainerRef(viewContainerRef);
   }
 }

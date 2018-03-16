@@ -1,6 +1,8 @@
 import { HttpClientTestingModule, HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Observable } from 'rxjs/Rx';
+
+import { Observable } from 'rxjs/Observable';
+
 import { Trip } from '../models/trip';
 import { AuthService } from './auth.service';
 import { TripService } from './trip.service';
@@ -8,16 +10,21 @@ import { TripService } from './trip.service';
 describe('TripService', () => {
   let tripService: TripService;
   let httpMock: HttpTestingController;
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
         HttpClientTestingModule
       ],
-      providers: [ AuthService, TripService ]
+      providers: [
+        AuthService,
+        TripService
+      ]
     });
     tripService = TestBed.get(TripService);
     httpMock = TestBed.get(HttpTestingController);
   });
+
   it('should allow a user to get a list of trips', () => {
     let responseData = [new Trip(), new Trip()];
     tripService.getTrips().subscribe(trips => {
@@ -26,12 +33,20 @@ describe('TripService', () => {
     let request: TestRequest = httpMock.expectOne('http://localhost:8000/api/trip/');
     request.flush(responseData);
   });
+
   it('should allow a user to create a trip', () => {
-    let trip: Trip = new Trip();
+    let trip: Trip = Trip.create({
+      pick_up_address: 'A',
+      drop_off_address: 'B'
+    });
     let webSocketSpy: jasmine.Spy = spyOn(tripService.webSocket, 'next').and.stub();
     tripService.createTrip(trip);
-    expect(webSocketSpy).toHaveBeenCalledWith(JSON.stringify(trip));
+    expect(webSocketSpy).toHaveBeenCalledWith(JSON.stringify({
+      type: 'create.trip',
+      data: trip
+    }));
   });
+
   it('should allow a user to get a trip by NK', () => {
     let responseData = new Trip(1, 'nk');
     tripService.getTrip('nk').subscribe(trip => {
@@ -40,12 +55,21 @@ describe('TripService', () => {
     let request: TestRequest = httpMock.expectOne('http://localhost:8000/api/trip/nk/');
     request.flush(responseData);
   });
+
   it('should allow a user to update a trip', () => {
-    let trip: Trip = new Trip();
+    let trip: Trip = Trip.create({
+      pick_up_address: 'A',
+      drop_off_address: 'B',
+      status: 'IN_PROGRESS'
+    });
     let webSocketSpy: jasmine.Spy = spyOn(tripService.webSocket, 'next').and.stub();
     tripService.updateTrip(trip);
-    expect(webSocketSpy).toHaveBeenCalledWith(JSON.stringify(trip));
+    expect(webSocketSpy).toHaveBeenCalledWith(JSON.stringify({
+      type: 'update.trip',
+      data: trip
+    }));
   });
+
   afterEach(() => {
     httpMock.verify();
   });
