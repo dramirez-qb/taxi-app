@@ -1,16 +1,19 @@
-import { HttpClientTestingModule, HttpTestingController, TestRequest } from '@angular/common/http/testing';
+import {
+  HttpClientTestingModule, HttpTestingController, TestRequest
+} from '@angular/common/http/testing';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
 
 import { AuthService } from '../../services/auth.service';
-import { LogInComponent } from '../log-in/log-in.component';
+import { User } from '../../models/user';
 import { SignUpComponent } from './sign-up.component';
 
 xdescribe('SignUpComponent', () => {
   let component: SignUpComponent;
   let fixture: ComponentFixture<SignUpComponent>;
+  let router: Router;
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
@@ -18,31 +21,40 @@ xdescribe('SignUpComponent', () => {
       imports: [
         FormsModule,
         HttpClientTestingModule,
-        RouterTestingModule.withRoutes([
-          { path: 'log-in', component: LogInComponent }
-        ])
+        RouterTestingModule.withRoutes([])
       ],
-      declarations: [ LogInComponent, SignUpComponent ],
+      declarations: [ SignUpComponent ],
       providers: [ AuthService ]
     });
-    httpMock = TestBed.get(HttpTestingController);
     fixture = TestBed.createComponent(SignUpComponent);
     component = fixture.componentInstance;
+    router = TestBed.get(Router);
+    httpMock = TestBed.get(HttpTestingController);
   });
 
   it('should allow a user to sign up for an account', () => {
-    let responseData = {
+    let spy: jasmine.Spy = spyOn(router, 'navigateByUrl');
+    let responseData = User.create({
       id: 1,
       username: 'rider@example.com',
-      group: 'rider'
+      first_name: 'Test',
+      last_name: 'User',
+      group: 'rider',
+      photo: '/media/photos/photo.png',
+    });
+    let photo: File = new File(['photo'], 'photo.jpg', {type: 'image/jpeg'});
+    component.user = {
+      username: 'rider@example.com',
+      first_name: 'Test',
+      last_name: 'User',
+      password: 'pAssw0rd!',
+      group: 'rider',
+      photo: photo
     };
-    component.user = {username: 'rider@example.com', password: 'pAssw0rd!', group: 'rider'};
     component.onSubmit();
     let request: TestRequest = httpMock.expectOne('http://localhost:8000/api/sign_up/');
     request.flush(responseData);
+    expect(spy).toHaveBeenCalledWith('/log-in');
   });
 
-  afterEach(() => {
-    httpMock.verify();
-  });
 });

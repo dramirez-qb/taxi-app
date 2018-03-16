@@ -3,6 +3,11 @@ import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest } from '@angular/c
 import { Observable } from 'rxjs/Rx';
 import { AuthService } from './auth.service';
 
+const ALLOW_ANY_PATHS: RegExp[] = [
+  /\/api\/sign_up\/$/,
+  /\/api\/log_in\/$/
+];
+
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
   private authService: AuthService;
@@ -10,12 +15,21 @@ export class TokenInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     this.authService = this.injector.get(AuthService);
     let token: string = this.authService.getToken();
-    request = request.clone({
-      setHeaders: {
-        'Authorization': `Token ${token}`,
-        'Content-Type': 'application/json'
+    let matchesAllowAny: boolean = false;
+    for (let pattern of ALLOW_ANY_PATHS) {
+      if (pattern.test(request.url)) {
+        matchesAllowAny = true;
+        break;
       }
-    });
+    }
+    if (!matchesAllowAny) {
+      request = request.clone({
+        setHeaders: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+    }
     return next.handle(request);
   }
 }
