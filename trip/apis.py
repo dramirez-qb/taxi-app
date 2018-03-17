@@ -1,22 +1,18 @@
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Q
-from rest_framework import permissions, status, views, viewsets
-from rest_framework.generics import CreateAPIView
+from rest_framework import generics, permissions, status, views, viewsets
 from rest_framework.response import Response
 from .models import Trip
 from .serializers import TripSerializer, UserSerializer
 
 
-class SignUpView(CreateAPIView):
-    permission_classes = (permissions.AllowAny,)
+class SignUpView(generics.CreateAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
 
 
 class LogInView(views.APIView):
-    permission_classes = (permissions.AllowAny,)
-
     def post(self, request):
         form = AuthenticationForm(data=request.data)
         if form.is_valid():
