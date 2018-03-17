@@ -43,20 +43,32 @@ class TaxiConsumer(AsyncJsonWebsocketConsumer):
     async def create_trip(self, event):
         trip = await self._create_trip(event.get('data'))
         trip_data = TripSerializer(trip).data
-        await self.channel_layer.group_send(group='drivers', message=trip_data)
+        await self.channel_layer.group_send(group='drivers', message={
+            'type': 'echo.message',
+            'data': trip_data
+        })
         if trip.nk not in self.trips:
             self.trips.add(trip.nk)
             await self.channel_layer.group_add(group=trip.nk, channel=self.channel_name)
-        await self.send_json(trip_data)
+        await self.send_json({
+            'type': 'MESSAGE',
+            'data': trip_data
+        })
 
     async def update_trip(self, event):
         trip = await self._update_trip(event.get('data'))
         trip_data = TripSerializer(trip).data
-        await self.channel_layer.group_send(group=trip.nk, message=trip_data)
+        await self.channel_layer.group_send(group=trip.nk, message={
+            'type': 'echo.message',
+            'data': trip_data
+        })
         if trip.nk not in self.trips:
             self.trips.add(trip.nk)
             await self.channel_layer.group_add(group=trip.nk, channel=self.channel_name)
-        await self.send_json(trip_data)
+        await self.send_json({
+            'type': 'MESSAGE',
+            'data': trip_data
+        })
 
     async def disconnect(self, code):
         channel_groups = [

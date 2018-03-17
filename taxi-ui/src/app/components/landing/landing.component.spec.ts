@@ -30,8 +30,7 @@ xdescribe('LandingComponent', () => {
     component = fixture.componentInstance;
     httpMock = TestBed.get(HttpTestingController);
     localStorage.setItem('taxi.user', JSON.stringify({
-      username: 'rider@example.com',
-      auth_token: '2df504b532e39a49e05b08b8ba718f7a327b8f76'
+      username: 'rider@example.com'
     }));
     fixture.detectChanges();
     logOutButton = fixture.debugElement.query(By.css('button.btn.btn-primary'));

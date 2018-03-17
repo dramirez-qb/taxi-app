@@ -14,7 +14,7 @@ export class TripService {
     private http: HttpClient
   ) {
     let user: User = User.getUser();
-    this.webSocket = Observable.webSocket(`ws://localhost:8000/${user.group}/`);
+    this.webSocket = Observable.webSocket(`ws://localhost:8000/taxi/`);
     this.messages = this.webSocket.share();
     this.messages.subscribe(message => console.log(message));
   }

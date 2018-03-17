@@ -39,8 +39,7 @@ describe('AuthService', () => {
       first_name: 'Test',
       last_name: 'User',
       group: 'rider',
-      photo: 'http://localhost:8000/media/photos/photo_Q1fX8sA.png',
-      auth_token: '2df504b532e39a49e05b08b8ba718f7a327b8f76'
+      photo: 'http://localhost:8000/media/photos/photo_Q1fX8sA.png'
     };
     localStorage.clear();
     authService.logIn('rider@example.com', 'pAssw0rd!').subscribe(user => {
@@ -52,9 +51,8 @@ describe('AuthService', () => {
   });
   it('should allow a user to log out', () => {
     let responseData = {};
-    let token = '2df504b532e39a49e05b08b8ba718f7a327b8f76';
     localStorage.setItem('taxi.user', JSON.stringify({}));
-    authService.logOut(token).subscribe(user => {
+    authService.logOut().subscribe(user => {
       expect(user).toEqual(responseData);
     });
     let request: TestRequest = httpMock.expectOne('http://localhost:8000/api/log_out/');

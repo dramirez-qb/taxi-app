@@ -27,13 +27,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'password1', 'password2', 'first_name', 'last_name', 'group', 'photo',)
+        fields = ('id', 'username', 'password1', 'password2', 'email', 'first_name', 'last_name', 'group', 'photo',)
         read_only_fields = ('id',)
-
-
-class PrivateUserSerializer(UserSerializer):
-    class Meta(UserSerializer.Meta):
-        fields = list(UserSerializer.Meta.fields) + ['auth_token']
 
 
 class ReadOnlyUserSerializer(serializers.ModelSerializer):
@@ -48,50 +43,33 @@ class ReadOnlyUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = read_only_fields = ('id', 'username', 'first_name', 'last_name', 'group', 'photo',)
+        fields = read_only_fields = ('id', 'username', 'email', 'first_name', 'last_name', 'group', 'photo',)
 
 
 class TripSerializer(serializers.ModelSerializer):
-    driver = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all(), allow_null=True, required=False)
-    rider = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all(), allow_null=True, required=False)
+    driver = ReadOnlyUserSerializer(allow_null=True, required=False)
+    rider = ReadOnlyUserSerializer(allow_null=True, required=False)
+
+    def create(self, validated_data):
+        data = validated_data.pop('rider', None)
+        trip = super().create(validated_data)
+        if data:
+            trip.rider = get_user_model().objects.get(username=data['username'])
+        trip.save()
+        return trip
 
     def update(self, instance, validated_data):
-        if validated_data.get('driver') is not None:
-            validated_data['driver'] = get_user_model().objects.get(pk=validated_data['driver'])
-        if validated_data.get('rider') is not None:
-            validated_data['rider'] = get_user_model().objects.get(pk=validated_data['rider'])
-        return super().update(instance, validated_data)
+        data = validated_data.pop('driver', None)
+        if data:
+            instance.driver = get_user_model().objects.get(username=data['username'])
+        instance.nk = validated_data.get('nk', instance.nk)
+        instance.pick_up_address = validated_data.get('pick_up_address', instance.pick_up_address)
+        instance.drop_off_address = validated_data.get('drop_off_address', instance.drop_off_address)
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
+        return instance
 
     class Meta:
         model = Trip
         fields = '__all__'
         read_only_fields = ('id', 'nk', 'created', 'updated',)
-
-
-# class TripSerializer(serializers.ModelSerializer):
-#     driver = ReadOnlyUserSerializer(allow_null=True, required=False)
-#     rider = ReadOnlyUserSerializer(allow_null=True, required=False)
-#
-#     def create(self, validated_data):
-#         data = validated_data.pop('rider', None)
-#         trip = super().create(validated_data)
-#         # if data:
-#         #     trip.rider = get_user_model().objects.get(username=data['username'])
-#         trip.save()
-#         return trip
-#
-#     def update(self, instance, validated_data):
-#         data = validated_data.pop('driver', None)
-#         if data:
-#             instance.driver = get_user_model().objects.get(username=data['username'])
-#         instance.nk = validated_data.get('nk', instance.nk)
-#         instance.pick_up_address = validated_data.get('pick_up_address', instance.pick_up_address)
-#         instance.drop_off_address = validated_data.get('drop_off_address', instance.drop_off_address)
-#         instance.status = validated_data.get('status', instance.status)
-#         instance.save()
-#         return instance
-#
-#     class Meta:
-#         model = Trip
-#         fields = '__all__'
-#         read_only_fields = ('id', 'nk', 'created', 'updated',)

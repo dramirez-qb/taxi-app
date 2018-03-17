@@ -1,22 +1,20 @@
 from io import BytesIO
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group as AuthGroup
+from django.contrib.auth.models import Group
 from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
-from rest_framework.authtoken.models import Token
+from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from rest_framework.test import APIClient, APITestCase
 from trip.models import Trip
-from trip.serializers import PrivateUserSerializer, TripSerializer
 
 PASSWORD = 'pAssw0rd!'
 
 
-def create_user(username='user@example.com', password=PASSWORD, group='rider'):
-    auth_group, _ = AuthGroup.objects.get_or_create(name=group)
+def create_user(*, username='user@example.com', password=PASSWORD, group_name='rider'):
+    group, _ = Group.objects.get_or_create(name=group_name)
     user = get_user_model().objects.create_user(username=username, password=password)
-    user.groups.add(auth_group)
+    user.groups.add(group)
     user.save()
     return user
 
@@ -44,7 +42,7 @@ class AuthenticationTest(APITestCase):
             'photo': photo_file,
         })
         user = get_user_model().objects.last()
-        self.assertEqual(HTTP_201_CREATED, response.status_code)
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         self.assertEqual(response.data['id'], user.id)
         self.assertEqual(response.data['username'], user.username)
         self.assertEqual(response.data['first_name'], user.first_name)
@@ -58,26 +56,21 @@ class AuthenticationTest(APITestCase):
             'username': user.username,
             'password': PASSWORD,
         })
-        self.assertEqual(HTTP_200_OK, response.status_code)
-        self.assertEqual(PrivateUserSerializer(user).data, response.data)
-        self.assertIsNotNone(Token.objects.get(user=user))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(response.data['username'], user.username)
 
     def test_user_can_log_out(self):
         user = create_user()
-        token = Token.objects.create(user=user)
-        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
         self.client.login(username=user.username, password=PASSWORD)
         response = self.client.post(reverse('log_out'))
-        self.assertEqual(HTTP_204_NO_CONTENT, response.status_code)
-        self.assertFalse(Token.objects.filter(user=user).exists())
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
 
 
 class HttpTripTest(APITestCase):
     def setUp(self):
         self.user = create_user()
-        token = Token.objects.create(user=self.user)
         self.client = APIClient()
-        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
+        self.client.login(username=self.user.username, password=PASSWORD)
 
     def test_user_can_list_personal_trips(self):
         trips = [
@@ -86,11 +79,13 @@ class HttpTripTest(APITestCase):
             Trip.objects.create(pick_up_address='C', drop_off_address='D')
         ]
         response = self.client.get(reverse('trip:trip_list'))
-        self.assertEqual(HTTP_200_OK, response.status_code)
-        self.assertEqual(TripSerializer(trips[0:2], many=True).data, response.data)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        exp_trip_nks = [trip.nk for trip in trips[0:2]]
+        act_trip_nks = [trip.get('nk') for trip in response.data]
+        self.assertCountEqual(act_trip_nks, exp_trip_nks)
 
     def test_user_can_retrieve_personal_trip_by_nk(self):
         trip = Trip.objects.create(pick_up_address='A', drop_off_address='B', rider=self.user)
         response = self.client.get(trip.get_absolute_url())
-        self.assertEqual(HTTP_200_OK, response.status_code)
-        self.assertEqual(TripSerializer(trip).data, response.data)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(trip.nk, response.data.get('nk'))

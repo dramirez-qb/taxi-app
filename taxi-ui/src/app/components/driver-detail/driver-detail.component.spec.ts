@@ -31,8 +31,7 @@ xdescribe('DriverDetailComponent', () => {
     localStorage.setItem('taxi.user', JSON.stringify({
       id: 1,
       username: 'Driver',
-      group: 'driver',
-      auth_token: ''
+      group: 'driver'
     }));
     component.trip = new Trip(1);
     component.updateTripStatus('COMPLETED');

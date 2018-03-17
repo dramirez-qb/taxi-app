@@ -10,7 +10,6 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from './services/auth.service';
 import { IsDriver } from './services/is-driver.service';
 import { IsRider } from './services/is-rider.service';
-import { TokenInterceptor } from './services/token.interceptor';
 import { TripDetailResolver } from './services/trip-detail.resolver';
 import { TripListResolver } from './services/trip-list.resolver';
 import { TripService } from './services/trip.service';
@@ -62,12 +61,7 @@ import { ToastModule } from 'ng2-toastr/ng2-toastr';
     IsRider,
     TripListResolver,
     TripDetailResolver,
-    TripService,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: TokenInterceptor,
-      multi: true
-    }
+    TripService
   ],
   bootstrap: [ AppComponent ]
 })
