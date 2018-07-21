@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 declare var google: any;
 
@@ -10,18 +10,17 @@ export class GoogleMapsService {
     pick_up_address: string,
     drop_off_address: string
   ): Observable<any> {
-    let request: any = {
+    const request: any = {
       origin: pick_up_address,
       destination: drop_off_address,
       travelMode: 'DRIVING'
     };
-    let directionsService = new google.maps.DirectionsService();
+    const directionsService = new google.maps.DirectionsService();
     return Observable.create(observer => {
       directionsService.route(request, (result, status) => {
         if (status === 'OK') {
           observer.next(result);
-        }
-        else {
+        } else {
           observer.error('Enter two valid addresses.');
         }
         observer.complete();

@@ -1,5 +1,4 @@
 import { TestBed, inject } from '@angular/core/testing';
-
 import { GoogleMapsService } from './google-maps.service';
 
 describe('GoogleMapsService', () => {

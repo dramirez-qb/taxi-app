@@ -5,8 +5,7 @@ export class User {
     public first_name?: string,
     public last_name?: string,
     public group?: string,
-    public photo?: any,
-    public auth_token?: string
+    public photo?: any
   ) {}
   static create(data: any): User {
     return new User(
@@ -15,30 +14,28 @@ export class User {
       data.first_name,
       data.last_name,
       data.group,
-      data.photo,
-      data.auth_token
+      data.photo
     );
   }
   static getUser(): User {
-    let userData: string = localStorage.getItem('taxi.user');
+    const userData: string = localStorage.getItem('taxi.user');
     if (userData) {
       return User.create(JSON.parse(userData));
     }
     return null;
   }
-  static isRider(): boolean {
-    let user: User = User.getUser();
-    if (user === null) {
-      return false;
-    }
-    return user.group === 'rider';
-  }
-
   static isDriver(): boolean {
-    let user: User = User.getUser();
+    const user: User = User.getUser();
     if (user === null) {
       return false;
     }
     return user.group === 'driver';
+  }
+  static isRider(): boolean {
+    const user: User = User.getUser();
+    if (user === null) {
+      return false;
+    }
+    return user.group === 'rider';
   }
 }

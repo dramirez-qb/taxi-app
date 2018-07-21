@@ -1,8 +1,10 @@
 // Angular modules.
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 
 // Resolvers.
@@ -14,7 +16,8 @@ import { AuthService } from './services/auth.service';
 import { GoogleMapsService } from './services/google-maps.service';
 import { IsDriver } from './services/is-driver.service';
 import { IsRider } from './services/is-rider.service';
-import { TokenInterceptor } from './services/token.interceptor';
+import { TripDetailResolver } from './services/trip-detail.resolver';
+import { TripListResolver } from './services/trip-list.resolver';
 import { TripService } from './services/trip.service';
 
 // Components.
@@ -35,7 +38,7 @@ import { ROUTES } from './app.routes';
 import { environment } from '../environments/environment';
 
 import { AgmCoreModule } from '@agm/core';
-import { ToastyConfig, ToastyModule, ToastyService } from 'ng2-toasty';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -54,13 +57,15 @@ import { ToastyConfig, ToastyModule, ToastyService } from 'ng2-toasty';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    CommonModule,
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot(ROUTES, { useHash: true }),
     AgmCoreModule.forRoot({
       apiKey: environment.GOOGLE_API_KEY
     }),
-    ToastyModule.forRoot()
+    ToastrModule.forRoot()
   ],
   providers: [
     AuthService,
@@ -70,11 +75,6 @@ import { ToastyConfig, ToastyModule, ToastyService } from 'ng2-toasty';
     TripListResolver,
     TripDetailResolver,
     TripService,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: TokenInterceptor,
-      multi: true
-    },
     ToastyConfig,
     ToastyService
   ],

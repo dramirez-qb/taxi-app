@@ -1,8 +1,18 @@
 import datetime
 import hashlib
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.shortcuts import reverse
+
+
+class User(AbstractUser):
+    photo = models.ImageField(upload_to='photos', null=True, blank=True)
+
+    @property
+    def group(self):
+        groups = self.groups.all()
+        return groups[0].name if groups else None
 
 
 class Trip(models.Model):
@@ -23,10 +33,20 @@ class Trip(models.Model):
     pick_up_address = models.CharField(max_length=255)
     drop_off_address = models.CharField(max_length=255)
     status = models.CharField(max_length=20, choices=TRIP_STATUSES, default=REQUESTED)
-    driver = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='trips_as_driver',
-                               on_delete=models.CASCADE)
-    rider = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='trips_as_rider',
-                              on_delete=models.CASCADE)
+    driver = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        related_name='trips_as_driver',
+        on_delete=models.CASCADE
+    )
+    rider = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        related_name='trips_as_rider',
+        on_delete=models.CASCADE
+    )
 
     def save(self, **kwargs):
         if not self.nk:

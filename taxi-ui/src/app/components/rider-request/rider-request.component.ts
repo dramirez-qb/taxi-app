@@ -19,9 +19,9 @@ class Marker {
   styleUrls: ['./rider-request.component.css']
 })
 export class RiderRequestComponent implements OnInit {
-  lat: number = 0;
-  lng: number = 0;
-  zoom: number = 13;
+  lat = 0;
+  lng = 0;
+  zoom = 13;
   markers: Marker[];
   trip: Trip = new Trip();
   constructor(
@@ -51,8 +51,8 @@ export class RiderRequestComponent implements OnInit {
         this.trip.pick_up_address,
         this.trip.drop_off_address
       ).subscribe((data: any) => {
-        let route: any = data.routes[0];
-        let leg: any = route.legs[0];
+        const route: any = data.routes[0];
+        const leg: any = route.legs[0];
         this.lat = leg.start_location.lat();
         this.lng = leg.start_location.lng();
         this.markers = [

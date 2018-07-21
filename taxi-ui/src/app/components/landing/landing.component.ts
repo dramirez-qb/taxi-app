@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 import { User } from '../../models/user';
 import { AuthService } from '../../services/auth.service';
 
@@ -9,17 +8,14 @@ import { AuthService } from '../../services/auth.service';
 })
 export class LandingComponent {
   constructor(private authService: AuthService) {}
-  hasToken(): boolean {
-    return this.authService.hasToken();
-  }
-  isDriver(): boolean {
-    return User.isDriver();
+  getUser(): User {
+    return User.getUser();
   }
   isRider(): boolean {
     return User.isRider();
   }
   logOut(): void {
-    this.authService.logOut(this.authService.getToken()).subscribe(() => {}, (error) => {
+    this.authService.logOut().subscribe(() => {}, (error) => {
       console.error(error);
     });
   }
