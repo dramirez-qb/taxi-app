@@ -1,10 +1,13 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+
+import { Subscription } from 'rxjs/Subscription';
+
+import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+
 import { Trip } from '../../models/trip';
 import { User } from '../../models/user';
 import { TripService } from '../../services/trip.service';
-import { ToastyService, ToastOptions } from 'ng2-toasty';
-import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'rider-dashboard',
@@ -16,8 +19,11 @@ export class RiderDashboardComponent implements OnDestroy, OnInit {
   constructor(
     private route: ActivatedRoute,
     private tripService: TripService,
-    private toastyService: ToastyService
-  ) {}
+    private toastsManager: ToastsManager,
+    private viewContainerRef: ViewContainerRef
+  ) {
+    this.toastsManager.setRootViewContainerRef(viewContainerRef);
+  }
   get currentTrips(): Trip[] {
     return this.trips.filter(trip => {
       return trip.driver !== null && trip.status !== 'COMPLETED';
@@ -30,8 +36,8 @@ export class RiderDashboardComponent implements OnDestroy, OnInit {
   }
   ngOnInit(): void {
     this.route.data.subscribe((data: {trips: Trip[]}) => this.trips = data.trips);
-    this.messages = this.tripService.messages.subscribe(message => {
-      let trip: Trip = <Trip> message;
+    this.messages = this.tripService.messages.subscribe((message: any) => {
+      let trip: Trip = Trip.create(message.data);
       this.updateTrips(trip);
       this.updateToast(trip);
     });
@@ -42,13 +48,13 @@ export class RiderDashboardComponent implements OnDestroy, OnInit {
   }
   updateToast(trip: Trip): void {
     if (trip.status === 'STARTED') {
-      this.toastyService.info(`Driver ${trip.driver.username} is coming to pick you up.`);
+      this.toastsManager.info(`Driver ${trip.driver.username} is coming to pick you up.`);
     }
     else if (trip.status === 'IN_PROGRESS') {
-      this.toastyService.info(`Driver ${trip.driver.username} is headed to your destination.`);
+      this.toastsManager.info(`Driver ${trip.driver.username} is headed to your destination.`);
     }
     else if (trip.status === 'COMPLETED') {
-      this.toastyService.info(`Driver ${trip.driver.username} has dropped you off.`);
+      this.toastsManager.info(`Driver ${trip.driver.username} has dropped you off.`);
     }
   }
   ngOnDestroy(): void {

@@ -5,8 +5,7 @@ export class User {
     public first_name?: string,
     public last_name?: string,
     public group?: string,
-    public photo?: any,
-    public auth_token?: string
+    public photo?: any
   ) {}
   static create(data: any): User {
     return new User(
@@ -15,8 +14,7 @@ export class User {
       data.first_name,
       data.last_name,
       data.group,
-      data.photo,
-      data.auth_token
+      data.photo
     );
   }
   static getUser(): User {
@@ -32,13 +30,5 @@ export class User {
       return false;
     }
     return user.group === 'rider';
-  }
-
-  static isDriver(): boolean {
-    let user: User = User.getUser();
-    if (user === null) {
-      return false;
-    }
-    return user.group === 'driver';
   }
 }

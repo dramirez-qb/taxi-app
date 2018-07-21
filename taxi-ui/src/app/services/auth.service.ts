@@ -32,19 +32,9 @@ export class AuthService {
     return this.http.post<User>(url, {username, password})
       .do(user => localStorage.setItem('taxi.user', JSON.stringify(user)));
   }
-  logOut(token): Observable<any> {
+  logOut(): Observable<any> {
     let url: string = `${this.BASE_URL}/log_out/`;
     return this.http.post(url, null)
-      .do(() => localStorage.removeItem('taxi.user'));
-  }
-  getToken(): string {
-    let user: User = User.getUser();
-    if (user === null) {
-      return null;
-    }
-    return user.auth_token;
-  }
-  hasToken(): boolean {
-    return this.getToken() !== null;
+      .finally(() => localStorage.removeItem('taxi.user'));
   }
 }

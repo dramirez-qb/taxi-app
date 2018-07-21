@@ -9,12 +9,12 @@ const BASE_URL: string = 'http://localhost:8000/api';
 @Injectable()
 export class TripService {
   webSocket: Subject<string>;
-  messages: Observable<Object>;
+  messages: Observable<any>;
   constructor(
     private http: HttpClient
   ) {
     let user: User = User.getUser();
-    this.webSocket = Observable.webSocket(`ws://localhost:8000/${user.group}/`);
+    this.webSocket = Observable.webSocket(`ws://localhost:8000/taxi/`);
     this.messages = this.webSocket.share();
     this.messages.subscribe(message => console.log(message));
   }
@@ -25,13 +25,21 @@ export class TripService {
       });
   }
   createTrip(trip: Trip): void {
-    this.webSocket.next(JSON.stringify(trip));
+    let message: any = {
+      type: 'create.trip',
+      data: trip
+    };
+    this.webSocket.next(JSON.stringify(message));
   }
   getTrip(nk: string): Observable<Trip> {
     return this.http.get<Trip>(`${BASE_URL}/trip/${nk}/`)
       .map(trip => Trip.create(trip));
   }
   updateTrip(trip: Trip): void {
-    this.webSocket.next(JSON.stringify(trip));
+    let message: any = {
+      type: 'update.trip',
+      data: trip
+    };
+    this.webSocket.next(JSON.stringify(message));
   }
 }
