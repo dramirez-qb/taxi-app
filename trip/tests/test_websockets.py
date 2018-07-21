@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.db import IntegrityError
 from django.test import Client
 from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
@@ -96,7 +95,6 @@ async def connect_and_update_trip(*, user, trip, status):
 @pytest.mark.django_db(transaction=True)
 class TestWebsockets:
 
-    @pytest.mark.skip('Temporary skip...')
     async def test_authorized_user_can_connect(self):
         user = await create_user(
             username='rider@example.com',
@@ -105,7 +103,6 @@ class TestWebsockets:
         communicator = await auth_connect(user)
         await communicator.disconnect()
 
-    @pytest.mark.skip('Temporary skip...')
     async def test_rider_can_create_trips(self):
         user = await create_user(username='rider@example.com', group='rider')
         communicator = await connect_and_create_trip(user=user)
@@ -120,7 +117,6 @@ class TestWebsockets:
         assert_equal(user.username, data['rider'].get('username'))
         await communicator.disconnect()
 
-    @pytest.mark.skip('Temporary skip...')
     async def test_rider_is_added_to_trip_group_on_create(self):
         user = await create_user(username='rider3@example.com', group='rider')
         communicator = await connect_and_create_trip(user=user)
@@ -137,26 +133,6 @@ class TestWebsockets:
         assert_equal(message, response)
         await communicator.disconnect()
 
-    # @pytest.mark.skip('Temporary skip...')
-    async def test_rider_is_added_to_trip_groups_on_connect(self):
-        user = await create_user(username='rider3@example.com', group='rider')
-        trip1 = await create_trip(pick_up_address='A', drop_off_address='B', rider=user)
-        # trip2 = await create_trip(pick_up_address='B', drop_off_address='C', rider=user)
-        communicator = await auth_connect(user)
-        message = {
-            'type': 'echo.message',
-            'data': 'This is a test message.'
-        }
-        channel_layer = get_channel_layer()
-        await channel_layer.group_send(group=trip1.nk, message=message)
-        response = await communicator.receive_json_from()
-        assert_equal(message, response)
-        # await channel_layer.group_send(group=trip2.nk, message=message)
-        # response = await communicator.receive_json_from()
-        # assert_equal(message, response)
-        await communicator.disconnect()
-
-    @pytest.mark.skip('Temporary skip...')
     async def test_driver_can_update_trips(self):
         trip = await create_trip(pick_up_address='A', drop_off_address='B')
         user = await create_user(username='driver1@example.com', group='driver')
@@ -172,7 +148,6 @@ class TestWebsockets:
         assert_equal(None, data['rider'])
         await communicator.disconnect()
 
-    @pytest.mark.skip('Temporary skip...')
     async def test_driver_is_added_to_trip_group_on_update(self):
         trip = await create_trip(pick_up_address='A', drop_off_address='B')
         user = await create_user(username='driver@example.com', group='driver')
@@ -190,7 +165,6 @@ class TestWebsockets:
         assert_equal(message, response)
         await communicator.disconnect()
 
-    @pytest.mark.skip('Temporary skip...')
     async def test_driver_is_alerted_on_trip_create(self):
         channel_layer = get_channel_layer()
         await channel_layer.group_add(group='drivers', channel='test_channel')
@@ -202,7 +176,6 @@ class TestWebsockets:
         assert_equal(user.username, data['rider'].get('username'))
         await communicator.disconnect()
 
-    @pytest.mark.skip('Temporary skip...')
     async def test_rider_is_alerted_on_trip_update(self):
         trip = await create_trip(pick_up_address='A', drop_off_address='B')
         channel_layer = get_channel_layer()
@@ -214,6 +187,3 @@ class TestWebsockets:
         assert_equal(trip.nk, data['nk'])
         assert_equal(user.username, data['driver'].get('username'))
         await communicator.disconnect()
-
-    # def teardown_method(self, method):
-    #     get_user_model().objects.all().delete()
