@@ -1,16 +1,16 @@
-import { Observable } from 'rxjs/Rx';
+import { Observable, of } from 'rxjs';
 import { Trip } from '../models/trip';
 import { TripListResolver } from './trip-list.resolver';
 
 describe('TripListResolver', () => {
   it('should resolve a list of trips', () => {
-    let tripsMock: Trip[] = [new Trip(), new Trip()];
-    let tripServiceMock: any = {
+    const tripsMock: Trip[] = [new Trip(), new Trip()];
+    const tripServiceMock: any = {
       getTrips: (): Observable<Trip[]> => {
-        return Observable.of(tripsMock);
+        return of(tripsMock);
       }
-    }
-    let tripListResolver: TripListResolver = new TripListResolver(tripServiceMock);
+    };
+    const tripListResolver: TripListResolver = new TripListResolver(tripServiceMock);
     tripListResolver.resolve(null, null).subscribe(trips => {
       expect(trips).toBe(tripsMock);
     });

@@ -1,17 +1,20 @@
 // Angular modules.
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 
+// Resolvers.
+import { TripDetailResolver } from './resolvers/trip-detail.resolver';
+import { TripListResolver } from './resolvers/trip-list.resolver';
+
 // Services.
 import { AuthService } from './services/auth.service';
+import { GoogleMapsService } from './services/google-maps.service';
 import { IsDriver } from './services/is-driver.service';
 import { IsRider } from './services/is-rider.service';
-import { TripDetailResolver } from './services/trip-detail.resolver';
-import { TripListResolver } from './services/trip-list.resolver';
 import { TripService } from './services/trip.service';
 
 // Components.
@@ -28,9 +31,11 @@ import { RiderRequestComponent } from './components/rider-request/rider-request.
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { TripCardComponent } from './components/trip-card/trip-card.component';
 
-import { routes } from './routes';
+import { ROUTES } from './app.routes';
+import { environment } from '../environments/environment';
 
-import { ToastModule } from 'ng2-toastr/ng2-toastr';
+import { AgmCoreModule } from '@agm/core';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -52,11 +57,15 @@ import { ToastModule } from 'ng2-toastr/ng2-toastr';
     BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
-    RouterModule.forRoot(routes, { useHash: true }),
-    ToastModule.forRoot()
+    RouterModule.forRoot(ROUTES, { useHash: true }),
+    AgmCoreModule.forRoot({
+      apiKey: environment.GOOGLE_API_KEY
+    }),
+    ToastrModule.forRoot()
   ],
   providers: [
     AuthService,
+    GoogleMapsService,
     IsDriver,
     IsRider,
     TripListResolver,

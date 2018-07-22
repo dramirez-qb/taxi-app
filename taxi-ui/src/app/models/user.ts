@@ -18,14 +18,21 @@ export class User {
     );
   }
   static getUser(): User {
-    let userData: string = localStorage.getItem('taxi.user');
+    const userData: string = localStorage.getItem('taxi.user');
     if (userData) {
       return User.create(JSON.parse(userData));
     }
     return null;
   }
+  static isDriver(): boolean {
+    const user: User = User.getUser();
+    if (user === null) {
+      return false;
+    }
+    return user.group === 'driver';
+  }
   static isRider(): boolean {
-    let user: User = User.getUser();
+    const user: User = User.getUser();
     if (user === null) {
       return false;
     }

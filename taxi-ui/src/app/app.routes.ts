@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
 
+// Resolvers.
+import { TripDetailResolver } from './resolvers/trip-detail.resolver';
+import { TripListResolver } from './resolvers/trip-list.resolver';
+
 // Services.
 import { IsDriver } from './services/is-driver.service';
 import { IsRider } from './services/is-rider.service';
-import { TripDetailResolver } from './services/trip-detail.resolver';
-import { TripListResolver } from './services/trip-list.resolver';
 
 // Components.
 import { AppComponent } from './app.component';
@@ -20,7 +22,7 @@ import { RiderRequestComponent } from './components/rider-request/rider-request.
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { TripCardComponent } from './components/trip-card/trip-card.component';
 
-export const routes: Routes = [
+export const ROUTES: Routes = [
   { path: 'sign-up', component: SignUpComponent },
   { path: 'log-in', component: LogInComponent },
   {

@@ -1,11 +1,39 @@
 import { HttpClientTestingModule, HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-
-import { Observable } from 'rxjs/Observable';
-
+import * as faker from 'faker';
 import { Trip } from '../models/trip';
+import { User } from '../models/user';
 import { AuthService } from './auth.service';
 import { TripService } from './trip.service';
+
+class UserFactory {
+  static create(data?: Object): User {
+    return User.create(Object.assign({
+      id: faker.random.number(),
+      username: faker.internet.email(),
+      first_name: faker.name.firstName(),
+      last_name: faker.name.lastName(),
+      group: 'rider',
+      photo: faker.image.imageUrl()
+    }, data));
+  }
+}
+
+class TripFactory {
+  static create(data?: Object): Trip {
+    return Trip.create(Object.assign({
+      id: faker.random.number(),
+      nk: faker.random.uuid(),
+      created: faker.date.past(),
+      updated: faker.date.past(),
+      pick_up_address: faker.address.streetAddress(),
+      drop_off_address: faker.address.streetAddress(),
+      status: 'REQUESTED',
+      driver: UserFactory.create({group: 'driver'}),
+      rider: UserFactory.create()
+    }, data));
+  }
+}
 
 describe('TripService', () => {
   let tripService: TripService;
@@ -26,48 +54,41 @@ describe('TripService', () => {
   });
 
   it('should allow a user to get a list of trips', () => {
-    let responseData = [new Trip(), new Trip()];
+    const responseData = [TripFactory.create(), TripFactory.create()];
     tripService.getTrips().subscribe(trips => {
-      expect(trips).toBe(responseData);
+      expect(trips).toEqual(responseData);
     });
-    let request: TestRequest = httpMock.expectOne('http://localhost:8000/api/trip/');
+    const request: TestRequest = httpMock.expectOne('http://localhost:8000/api/trip/');
     request.flush(responseData);
   });
 
   it('should allow a user to create a trip', () => {
-    let trip: Trip = Trip.create({
-      pick_up_address: 'A',
-      drop_off_address: 'B'
-    });
-    let webSocketSpy: jasmine.Spy = spyOn(tripService.webSocket, 'next').and.stub();
+    tripService.webSocket = jasmine.createSpyObj('webSocket', ['next']);
+    const trip: Trip = TripFactory.create();
     tripService.createTrip(trip);
-    expect(webSocketSpy).toHaveBeenCalledWith(JSON.stringify({
+    expect(tripService.webSocket.next).toHaveBeenCalledWith({
       type: 'create.trip',
       data: trip
-    }));
+    });
   });
 
   it('should allow a user to get a trip by NK', () => {
-    let responseData = new Trip(1, 'nk');
+    const responseData = TripFactory.create();
     tripService.getTrip('nk').subscribe(trip => {
-      expect(trip).toBe(responseData);
+      expect(trip).toEqual(responseData);
     });
-    let request: TestRequest = httpMock.expectOne('http://localhost:8000/api/trip/nk/');
+    const request: TestRequest = httpMock.expectOne('http://localhost:8000/api/trip/nk/');
     request.flush(responseData);
   });
 
   it('should allow a user to update a trip', () => {
-    let trip: Trip = Trip.create({
-      pick_up_address: 'A',
-      drop_off_address: 'B',
-      status: 'IN_PROGRESS'
-    });
-    let webSocketSpy: jasmine.Spy = spyOn(tripService.webSocket, 'next').and.stub();
+    tripService.webSocket = jasmine.createSpyObj('webSocket', ['next']);
+    const trip: Trip = TripFactory.create({status: 'IN_PROGRESS'});
     tripService.updateTrip(trip);
-    expect(webSocketSpy).toHaveBeenCalledWith(JSON.stringify({
+    expect(tripService.webSocket.next).toHaveBeenCalledWith({
       type: 'update.trip',
       data: trip
-    }));
+    });
   });
 
   afterEach(() => {

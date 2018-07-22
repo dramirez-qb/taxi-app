@@ -1,10 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-
-import { Subscription } from 'rxjs/Subscription';
-
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
-
+import { Subscription } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 import { Trip } from '../../models/trip';
 import { User } from '../../models/user';
 import { TripService } from '../../services/trip.service';
@@ -19,11 +16,9 @@ export class DriverDashboardComponent implements OnDestroy, OnInit {
   constructor(
     private route: ActivatedRoute,
     private tripService: TripService,
-    private toastsManager: ToastsManager,
+    private toastr: ToastrService,
     private viewContainerRef: ViewContainerRef
-  ) {
-    this.toastsManager.setRootViewContainerRef(viewContainerRef);
-  }
+  ) {}
   get currentTrips(): Trip[] {
     return this.trips.filter(trip => {
       return trip.driver !== null && trip.status !== 'COMPLETED';
@@ -41,8 +36,9 @@ export class DriverDashboardComponent implements OnDestroy, OnInit {
   }
   ngOnInit(): void {
     this.route.data.subscribe((data: {trips: Trip[]}) => this.trips = data.trips);
+    this.tripService.connect();
     this.messages = this.tripService.messages.subscribe((message: any) => {
-      let trip: Trip = Trip.create(message.data);
+      const trip: Trip = Trip.create(message.data);
       this.updateTrips(trip);
       this.updateToast(trip);
     });
@@ -53,7 +49,7 @@ export class DriverDashboardComponent implements OnDestroy, OnInit {
   }
   updateToast(trip: Trip): void {
     if (trip.driver === null) {
-      this.toastsManager.info(`Rider ${trip.rider.username} has requested a trip.`);
+      this.toastr.info(`Rider ${trip.rider.username} has requested a trip.`);
     }
   }
   ngOnDestroy(): void {

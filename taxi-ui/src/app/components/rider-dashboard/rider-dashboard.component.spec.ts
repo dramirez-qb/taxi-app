@@ -4,14 +4,13 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MockBackend } from '@angular/http/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { By } from "@angular/platform-browser";
+import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
-
 import { AppComponent } from '../../app.component';
 import { RiderDashboardComponent } from './rider-dashboard.component';
 import { IsRider } from '../../services/is-rider.service';
 import { Trip } from '../../models/trip';
-import { TripListResolver } from '../../services/trip-list.resolver';
+import { TripListResolver } from '../../resolvers/trip-list.resolver';
 import { TripService } from '../../services/trip.service';
 
 xdescribe('RiderDashboardComponent', () => {
@@ -26,7 +25,7 @@ xdescribe('RiderDashboardComponent', () => {
       connection.mockRespond(new Response(new ResponseOptions({
         status: status,
         body: JSON.stringify(responseData)
-      })))
+      })));
     });
   }
 
@@ -39,7 +38,7 @@ xdescribe('RiderDashboardComponent', () => {
             path: 'rider',
             component: RiderDashboardComponent,
             canActivate: [ IsRider ],
-            //resolve: [ TripListResolve ]
+            // resolve: [ TripListResolve ]
           }
         ])
       ],
@@ -69,7 +68,7 @@ xdescribe('RiderDashboardComponent', () => {
   });
 
   it('should load the rider dashboard for a rider', fakeAsync(() => {
-    let responseData = [{
+    const responseData = [{
       id: 1,
       status: 'REQUESTED'
     }];
@@ -81,7 +80,7 @@ xdescribe('RiderDashboardComponent', () => {
   }));
 
   it('should not load the rider dashboard for a non-rider', fakeAsync(() => {
-    let responseData = [{
+    const responseData = [{
       id: 1,
       status: 'REQUESTED'
     }];
@@ -93,7 +92,7 @@ xdescribe('RiderDashboardComponent', () => {
   }));
 
   it('should filter trips by status', fakeAsync(() => {
-    let responseData = [{
+    const responseData = [{
       id: 1,
       status: 'REQUESTED'
     }, {
@@ -104,7 +103,7 @@ xdescribe('RiderDashboardComponent', () => {
     tick();
     riderComponent.trips = responseData as Trip[];
     riderFixture.detectChanges();
-    let listGroupItems = riderFixture.debugElement.queryAll(By.css('.list-group-item'));
+    const listGroupItems = riderFixture.debugElement.queryAll(By.css('.list-group-item'));
     expect(listGroupItems.length).toBe(1);
   }));
 

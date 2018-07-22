@@ -1,6 +1,7 @@
 import { User } from './user';
 
 export class Trip {
+  public otherUser: User;
   static create(data: any): Trip {
     return new Trip(
       data.id,
@@ -14,7 +15,6 @@ export class Trip {
       User.create(data.rider)
     );
   }
-  public otherUser: User;
   constructor(
     public id?: number,
     public nk?: string,

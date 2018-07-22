@@ -31,8 +31,8 @@ xdescribe('RiderRequestComponent', () => {
   });
 
   it('should allow a user to create a trip', () => {
-    let spy = spyOn(tripService, 'createTrip').and.stub();
-    let routerSpy = spyOn(router, 'navigateByUrl').and.stub();
+    const spy = spyOn(tripService, 'createTrip').and.stub();
+    const routerSpy = spyOn(router, 'navigateByUrl').and.stub();
     localStorage.setItem('taxi.user', JSON.stringify({
       id: 1,
       username: 'Rider',
