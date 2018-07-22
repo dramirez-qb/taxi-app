@@ -9,14 +9,17 @@ import { User } from '../models/user';
 @Injectable()
 export class TripService {
   private BASE_URL = 'http://localhost:8000/api';
-  webSocket: WebSocketSubject<string>;
+  webSocket: WebSocketSubject<any>;
   messages: Observable<any>;
   constructor(
     private http: HttpClient
-  ) {
-    this.webSocket = new WebSocketSubject(`ws://localhost:8000/taxi/`);
-    this.messages = this.webSocket.pipe(share());
-    this.messages.subscribe(message => console.log(message));
+  ) {}
+  connect(): void {
+    if (!this.webSocket || this.webSocket.closed) {
+      this.webSocket = new WebSocketSubject(`ws://localhost:8000/taxi/`);
+      this.messages = this.webSocket.pipe(share());
+      this.messages.subscribe(message => console.log(message));
+    }
   }
   getTrips(): Observable<Trip[]> {
     return this.http.get<Trip[]>(`${this.BASE_URL}/trip/`).pipe(
@@ -24,11 +27,12 @@ export class TripService {
     );
   }
   createTrip(trip: Trip): void {
+    this.connect();
     const message: any = {
       type: 'create.trip',
       data: trip
     };
-    this.webSocket.next(JSON.stringify(message));
+    this.webSocket.next(message);
   }
   getTrip(nk: string): Observable<Trip> {
     return this.http.get<Trip>(`${this.BASE_URL}/trip/${nk}/`).pipe(
@@ -36,10 +40,11 @@ export class TripService {
     );
   }
   updateTrip(trip: Trip): void {
+    this.connect();
     const message: any = {
       type: 'update.trip',
       data: trip
     };
-    this.webSocket.next(JSON.stringify(message));
+    this.webSocket.next(message);
   }
 }

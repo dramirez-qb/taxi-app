@@ -1,5 +1,4 @@
 // Angular modules.
-import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -16,8 +15,6 @@ import { AuthService } from './services/auth.service';
 import { GoogleMapsService } from './services/google-maps.service';
 import { IsDriver } from './services/is-driver.service';
 import { IsRider } from './services/is-rider.service';
-import { TripDetailResolver } from './services/trip-detail.resolver';
-import { TripListResolver } from './services/trip-list.resolver';
 import { TripService } from './services/trip.service';
 
 // Components.
@@ -58,7 +55,6 @@ import { ToastrModule } from 'ngx-toastr';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    CommonModule,
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot(ROUTES, { useHash: true }),
@@ -74,9 +70,7 @@ import { ToastrModule } from 'ngx-toastr';
     IsRider,
     TripListResolver,
     TripDetailResolver,
-    TripService,
-    ToastyConfig,
-    ToastyService
+    TripService
   ],
   bootstrap: [ AppComponent ]
 })

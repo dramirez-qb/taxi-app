@@ -63,13 +63,13 @@ describe('TripService', () => {
   });
 
   it('should allow a user to create a trip', () => {
+    tripService.webSocket = jasmine.createSpyObj('webSocket', ['next']);
     const trip: Trip = TripFactory.create();
-    const webSocketSpy: jasmine.Spy = spyOn(tripService.webSocket, 'next').and.stub();
     tripService.createTrip(trip);
-    expect(webSocketSpy).toHaveBeenCalledWith(JSON.stringify({
+    expect(tripService.webSocket.next).toHaveBeenCalledWith({
       type: 'create.trip',
       data: trip
-    }));
+    });
   });
 
   it('should allow a user to get a trip by NK', () => {
@@ -82,13 +82,13 @@ describe('TripService', () => {
   });
 
   it('should allow a user to update a trip', () => {
+    tripService.webSocket = jasmine.createSpyObj('webSocket', ['next']);
     const trip: Trip = TripFactory.create({status: 'IN_PROGRESS'});
-    const webSocketSpy: jasmine.Spy = spyOn(tripService.webSocket, 'next').and.stub();
     tripService.updateTrip(trip);
-    expect(webSocketSpy).toHaveBeenCalledWith(JSON.stringify({
+    expect(tripService.webSocket.next).toHaveBeenCalledWith({
       type: 'update.trip',
       data: trip
-    }));
+    });
   });
 
   afterEach(() => {

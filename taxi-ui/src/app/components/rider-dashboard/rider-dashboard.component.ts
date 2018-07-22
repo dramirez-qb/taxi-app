@@ -31,6 +31,7 @@ export class RiderDashboardComponent implements OnDestroy, OnInit {
   }
   ngOnInit(): void {
     this.route.data.subscribe((data: {trips: Trip[]}) => this.trips = data.trips);
+    this.tripService.connect();
     this.messages = this.tripService.messages.subscribe((message: any) => {
       const trip: Trip = Trip.create(message.data);
       this.updateTrips(trip);
