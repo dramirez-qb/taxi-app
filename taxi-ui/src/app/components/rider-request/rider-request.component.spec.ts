@@ -3,9 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Trip } from '../../models/trip';
 import { AuthService } from '../../services/auth.service';
-import { TripService } from '../../services/trip.service';
+import { Trip, TripService } from '../../services/trip.service';
 import { RiderRequestComponent } from './rider-request.component';
 
 xdescribe('RiderRequestComponent', () => {

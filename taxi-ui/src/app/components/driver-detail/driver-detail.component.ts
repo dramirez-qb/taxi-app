@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Trip } from '../../models/trip';
-import { User } from '../../models/user';
-import { TripService } from '../../services/trip.service';
+import { User } from '../../services/auth.service';
+import { Trip, TripService } from '../../services/trip.service';
 
 @Component({
-  selector: 'driver-detail',
+  selector: 'app-driver-detail',
   templateUrl: './driver-detail.component.html'
 })
 export class DriverDetailComponent implements OnInit {

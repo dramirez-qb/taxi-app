@@ -1,11 +1,12 @@
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Trip } from '../models/trip';
+import { Trip } from '../services/trip.service';
 import { TripDetailResolver } from './trip-detail.resolver';
+import { TripFactory } from '../tests/factories';
 
 describe('TripDetailResolver', () => {
   it('should resolve a trip', () => {
-    const tripMock: Trip = new Trip(1, 'nk');
+    const tripMock: Trip = TripFactory.create();
     const tripServiceMock: any = {
       getTrip: (nk: string): Observable<Trip> => {
         return new Observable<Trip>(observer => {
@@ -16,7 +17,7 @@ describe('TripDetailResolver', () => {
     };
     const tripDetailResolver: TripDetailResolver = new TripDetailResolver(tripServiceMock);
     const route: ActivatedRouteSnapshot = new ActivatedRouteSnapshot();
-    route.params = {nk: 'nk'};
+    route.params = {nk: tripMock.nk};
     tripDetailResolver.resolve(route, null).subscribe(trip => {
       expect(trip).toBe(tripMock);
     });

@@ -1,5 +1,5 @@
 import { Observable, of } from 'rxjs';
-import { Trip } from '../models/trip';
+import { Trip } from '../services/trip.service';
 import { TripListResolver } from './trip-list.resolver';
 
 describe('TripListResolver', () => {

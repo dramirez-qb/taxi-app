@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'rider',
+  selector: 'app-rider',
   templateUrl: './rider.component.html'
 })
 export class RiderComponent {}

@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Trip } from '../../models/trip';
-import { User } from '../../models/user';
+import { User } from '../../services/auth.service';
 import { GoogleMapsService } from '../../services/google-maps.service';
-import { TripService } from '../../services/trip.service';
+import { Trip, TripService } from '../../services/trip.service';
 
 class Marker {
   constructor(
@@ -14,7 +13,7 @@ class Marker {
 }
 
 @Component({
-  selector: 'rider-request',
+  selector: 'app-rider-request',
   templateUrl: './rider-request.component.html',
   styleUrls: ['./rider-request.component.css']
 })

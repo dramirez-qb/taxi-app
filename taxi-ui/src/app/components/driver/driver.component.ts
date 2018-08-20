@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'driver',
+  selector: 'app-driver',
   templateUrl: './driver.component.html'
 })
 export class DriverComponent {}

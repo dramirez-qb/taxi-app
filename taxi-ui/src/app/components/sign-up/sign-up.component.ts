@@ -14,7 +14,7 @@ class UserData {
 }
 
 @Component({
-  selector: 'sign-up',
+  selector: 'app-sign-up',
   templateUrl: './sign-up.component.html'
 })
 export class SignUpComponent {

@@ -6,10 +6,10 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AuthService } from '../../services/auth.service';
-import { User } from '../../models/user';
+import { UserFactory } from '../../tests/factories';
 import { LogInComponent } from './log-in.component';
 
-xdescribe('LogInComponent', () => {
+describe('LogInComponent', () => {
   let component: LogInComponent;
   let fixture: ComponentFixture<LogInComponent>;
   let router: Router;
@@ -33,14 +33,7 @@ xdescribe('LogInComponent', () => {
 
   it('should allow a user to log into an existing account', () => {
     const spy: jasmine.Spy = spyOn(router, 'navigateByUrl');
-    const responseData = User.create({
-      id: 1,
-      username: 'rider@example.com',
-      first_name: 'Test',
-      last_name: 'User',
-      group: 'rider',
-      photo: '/media/photos/photo.png'
-    });
+    const responseData = UserFactory.create({username: 'rider@example.com'});
     component.user = {username: 'rider@example.com', password: 'pAssw0rd!'};
     component.onSubmit();
     const request: TestRequest = httpMock.expectOne('http://localhost:8000/api/log_in/');

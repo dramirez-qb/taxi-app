@@ -11,7 +11,7 @@ class UserData {
 }
 
 @Component({
-  selector: 'log-in',
+  selector: 'app-log-in',
   templateUrl: './log-in.component.html'
 })
 export class LogInComponent {

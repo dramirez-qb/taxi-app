@@ -5,11 +5,10 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
-import { User } from '../../models/user';
+import { AuthService, User } from '../../services/auth.service';
 import { SignUpComponent } from './sign-up.component';
 
-xdescribe('SignUpComponent', () => {
+describe('SignUpComponent', () => {
   let component: SignUpComponent;
   let fixture: ComponentFixture<SignUpComponent>;
   let router: Router;

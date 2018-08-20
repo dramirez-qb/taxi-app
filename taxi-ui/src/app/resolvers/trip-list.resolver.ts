@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
-import { Trip } from '../models/trip';
-import { TripService } from '../services/trip.service';
 import { Observable } from 'rxjs';
+import { Trip, TripService } from '../services/trip.service';
 
 @Injectable()
 export class TripListResolver implements Resolve<Trip[]> {

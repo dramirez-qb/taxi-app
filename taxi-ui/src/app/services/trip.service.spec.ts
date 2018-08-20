@@ -1,39 +1,7 @@
 import { HttpClientTestingModule, HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import * as faker from 'faker';
-import { Trip } from '../models/trip';
-import { User } from '../models/user';
-import { AuthService } from './auth.service';
-import { TripService } from './trip.service';
-
-class UserFactory {
-  static create(data?: Object): User {
-    return User.create(Object.assign({
-      id: faker.random.number(),
-      username: faker.internet.email(),
-      first_name: faker.name.firstName(),
-      last_name: faker.name.lastName(),
-      group: 'rider',
-      photo: faker.image.imageUrl()
-    }, data));
-  }
-}
-
-class TripFactory {
-  static create(data?: Object): Trip {
-    return Trip.create(Object.assign({
-      id: faker.random.number(),
-      nk: faker.random.uuid(),
-      created: faker.date.past(),
-      updated: faker.date.past(),
-      pick_up_address: faker.address.streetAddress(),
-      drop_off_address: faker.address.streetAddress(),
-      status: 'REQUESTED',
-      driver: UserFactory.create({group: 'driver'}),
-      rider: UserFactory.create()
-    }, data));
-  }
-}
+import { Trip, TripService } from './trip.service';
+import { TripFactory } from '../tests/factories';
 
 describe('TripService', () => {
   let tripService: TripService;
@@ -45,7 +13,6 @@ describe('TripService', () => {
         HttpClientTestingModule
       ],
       providers: [
-        AuthService,
         TripService
       ]
     });

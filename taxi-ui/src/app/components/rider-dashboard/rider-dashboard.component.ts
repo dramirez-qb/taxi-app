@@ -2,12 +2,10 @@ import { Component, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { Trip } from '../../models/trip';
-import { User } from '../../models/user';
-import { TripService } from '../../services/trip.service';
+import { Trip, TripService } from '../../services/trip.service';
 
 @Component({
-  selector: 'rider-dashboard',
+  selector: 'app-rider-dashboard',
   templateUrl: './rider-dashboard.component.html'
 })
 export class RiderDashboardComponent implements OnDestroy, OnInit {

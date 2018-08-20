@@ -1,13 +1,11 @@
-import { Component, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { Trip } from '../../models/trip';
-import { User } from '../../models/user';
-import { TripService } from '../../services/trip.service';
+import { Trip, TripService } from '../../services/trip.service';
 
 @Component({
-  selector: 'driver-dashboard',
+  selector: 'app-driver-dashboard',
   templateUrl: './driver-dashboard.component.html'
 })
 export class DriverDashboardComponent implements OnDestroy, OnInit {
@@ -16,8 +14,7 @@ export class DriverDashboardComponent implements OnDestroy, OnInit {
   constructor(
     private route: ActivatedRoute,
     private tripService: TripService,
-    private toastr: ToastrService,
-    private viewContainerRef: ViewContainerRef
+    private toastr: ToastrService
   ) {}
   get currentTrips(): Trip[] {
     return this.trips.filter(trip => {

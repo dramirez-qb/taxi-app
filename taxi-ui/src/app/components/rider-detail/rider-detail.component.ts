@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Trip } from '../../models/trip';
+import { Trip } from '../../services/trip.service';
 
 @Component({
-  selector: 'rider-detail',
+  selector: 'app-rider-detail',
   templateUrl: './rider-detail.component.html'
 })
 export class RiderDetailComponent implements OnInit {
