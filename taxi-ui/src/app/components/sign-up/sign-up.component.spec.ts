@@ -5,7 +5,8 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule } from '@angular/forms';
-import { AuthService, User } from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
+import { UserFactory } from '../../tests/factories';
 import { SignUpComponent } from './sign-up.component';
 
 describe('SignUpComponent', () => {
@@ -32,26 +33,19 @@ describe('SignUpComponent', () => {
 
   it('should allow a user to sign up for an account', () => {
     const spy: jasmine.Spy = spyOn(router, 'navigateByUrl');
-    const responseData = User.create({
-      id: 1,
-      username: 'rider@example.com',
-      first_name: 'Test',
-      last_name: 'User',
-      group: 'rider',
-      photo: '/media/photos/photo.png',
-    });
-    const photo: File = new File(['photo'], 'photo.jpg', {type: 'image/jpeg'});
+    const userData = UserFactory.create();
+    const photo: File = new File(['photo'], userData.photo, {type: 'image/jpeg'});
     component.user = {
-      username: 'rider@example.com',
-      first_name: 'Test',
-      last_name: 'User',
+      username: userData.username,
+      first_name: userData.first_name,
+      last_name: userData.last_name,
       password: 'pAssw0rd!',
-      group: 'rider',
+      group: userData.group,
       photo: photo
     };
     component.onSubmit();
     const request: TestRequest = httpMock.expectOne('http://localhost:8000/api/sign_up/');
-    request.flush(responseData);
+    request.flush(userData);
     expect(spy).toHaveBeenCalledWith('/log-in');
   });
 

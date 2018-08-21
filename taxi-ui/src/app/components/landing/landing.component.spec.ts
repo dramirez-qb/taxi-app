@@ -7,6 +7,7 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { UserFactory } from '../../tests/factories';
 import { LandingComponent } from './landing.component';
 
 xdescribe('LandingComponent', () => {
@@ -28,9 +29,9 @@ xdescribe('LandingComponent', () => {
     fixture = TestBed.createComponent(LandingComponent);
     component = fixture.componentInstance;
     httpMock = TestBed.get(HttpTestingController);
-    localStorage.setItem('taxi.user', JSON.stringify({
-      username: 'rider@example.com'
-    }));
+    localStorage.setItem('taxi.user', JSON.stringify(
+      UserFactory.create()
+    ));
     fixture.detectChanges();
     logOutButton = fixture.debugElement.query(By.css('button.btn.btn-primary'));
   });
@@ -40,6 +41,23 @@ xdescribe('LandingComponent', () => {
     const request: TestRequest = httpMock.expectOne('http://localhost:8000/api/log_out/');
     request.flush({});
     expect(localStorage.getItem('taxi.user')).toBeNull();
+  });
+
+  it('should indicate whether a user is logged in', () => {
+    localStorage.clear();
+    expect(component.getUser()).toBeFalsy();
+    localStorage.setItem('taxi.user', JSON.stringify(
+      UserFactory.create()
+    ));
+    expect(component.getUser()).toBeTruthy();
+  });
+
+  it('should return true if the user is a rider', () => {
+    localStorage.clear();
+    localStorage.setItem('taxi.user', JSON.stringify(
+      UserFactory.create({group: 'rider'})
+    ));
+    expect(component.isRider()).toBeTruthy();
   });
 
   afterEach(() => {

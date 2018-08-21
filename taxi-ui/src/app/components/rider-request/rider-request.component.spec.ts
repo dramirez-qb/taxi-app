@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AuthService } from '../../services/auth.service';
 import { Trip, TripService } from '../../services/trip.service';
+import { TripFactory, UserFactory } from '../../tests/factories';
 import { RiderRequestComponent } from './rider-request.component';
 
 xdescribe('RiderRequestComponent', () => {
@@ -17,7 +17,7 @@ xdescribe('RiderRequestComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, HttpClientModule, RouterTestingModule.withRoutes([]) ],
       declarations: [ RiderRequestComponent ],
-      providers: [ AuthService, TripService ]
+      providers: [ TripService ]
     }).compileComponents();
     tripService = TestBed.get(TripService);
     router = TestBed.get(Router);
@@ -32,12 +32,10 @@ xdescribe('RiderRequestComponent', () => {
   it('should allow a user to create a trip', () => {
     const spy = spyOn(tripService, 'createTrip').and.stub();
     const routerSpy = spyOn(router, 'navigateByUrl').and.stub();
-    localStorage.setItem('taxi.user', JSON.stringify({
-      id: 1,
-      username: 'Rider',
-      group: 'rider'
-    }));
-    component.trip = new Trip(1);
+    localStorage.setItem('taxi.user', JSON.stringify(
+      UserFactory.create({group: 'rider'})
+    ));
+    component.trip = TripFactory.create();
     component.onSubmit();
     expect(spy.calls.count()).toBe(1);
     expect(routerSpy.calls.count()).toBe(1);

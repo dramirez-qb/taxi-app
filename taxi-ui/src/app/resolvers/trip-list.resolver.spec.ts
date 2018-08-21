@@ -1,10 +1,14 @@
 import { Observable, of } from 'rxjs';
 import { Trip } from '../services/trip.service';
 import { TripListResolver } from './trip-list.resolver';
+import { TripFactory } from '../tests/factories';
 
 describe('TripListResolver', () => {
   it('should resolve a list of trips', () => {
-    const tripsMock: Trip[] = [new Trip(), new Trip()];
+    const tripsMock: Trip[] = [
+      TripFactory.create(),
+      TripFactory.create()
+    ];
     const tripServiceMock: any = {
       getTrips: (): Observable<Trip[]> => {
         return of(tripsMock);

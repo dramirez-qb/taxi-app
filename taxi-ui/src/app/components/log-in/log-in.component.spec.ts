@@ -33,12 +33,12 @@ describe('LogInComponent', () => {
 
   it('should allow a user to log into an existing account', () => {
     const spy: jasmine.Spy = spyOn(router, 'navigateByUrl');
-    const responseData = UserFactory.create({username: 'rider@example.com'});
-    component.user = {username: 'rider@example.com', password: 'pAssw0rd!'};
+    const userData = UserFactory.create();
+    component.user = {username: userData.username, password: 'pAssw0rd!'};
     component.onSubmit();
     const request: TestRequest = httpMock.expectOne('http://localhost:8000/api/log_in/');
-    request.flush(responseData);
-    expect(localStorage.getItem('taxi.user')).toEqual(JSON.stringify(responseData));
+    request.flush(userData);
+    expect(localStorage.getItem('taxi.user')).toEqual(JSON.stringify(userData));
     expect(spy).toHaveBeenCalledWith('');
   });
 

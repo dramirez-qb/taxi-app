@@ -21,12 +21,12 @@ describe('TripService', () => {
   });
 
   it('should allow a user to get a list of trips', () => {
-    const responseData = [TripFactory.create(), TripFactory.create()];
+    const tripData = [TripFactory.create(), TripFactory.create()];
     tripService.getTrips().subscribe(trips => {
-      expect(trips).toEqual(responseData);
+      expect(trips).toEqual(tripData);
     });
     const request: TestRequest = httpMock.expectOne('http://localhost:8000/api/trip/');
-    request.flush(responseData);
+    request.flush(tripData);
   });
 
   it('should allow a user to create a trip', () => {
@@ -40,12 +40,12 @@ describe('TripService', () => {
   });
 
   it('should allow a user to get a trip by NK', () => {
-    const responseData = TripFactory.create();
-    tripService.getTrip('nk').subscribe(trip => {
-      expect(trip).toEqual(responseData);
+    const tripData = TripFactory.create();
+    tripService.getTrip(tripData.nk).subscribe(trip => {
+      expect(trip).toEqual(tripData);
     });
-    const request: TestRequest = httpMock.expectOne('http://localhost:8000/api/trip/nk/');
-    request.flush(responseData);
+    const request: TestRequest = httpMock.expectOne(`http://localhost:8000/api/trip/${tripData.nk}/`);
+    request.flush(tripData);
   });
 
   it('should allow a user to update a trip', () => {
