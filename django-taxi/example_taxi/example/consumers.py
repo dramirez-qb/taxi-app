@@ -1,93 +1,116 @@
-from channels.generic.websockets import JsonWebsocketConsumer
+import asyncio
 
-from .serializers import TripSerializer
+from channels.db import database_sync_to_async
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
-
-from channels import Group
-from channels.generic.websockets import JsonWebsocketConsumer
 from .models import Trip
 from .serializers import TripSerializer
 
 
-class TripConsumer(JsonWebsocketConsumer):
-    http_user = True
+class TaxiConsumer(AsyncJsonWebsocketConsumer):
 
-    def user_trip_nks(self):
-        raise NotImplementedError()
+    def __init__(self, scope):
+        super().__init__(scope)
+        self.trips = set()
 
-    def connect(self, message, **kwargs):
-        self.message.reply_channel.send({'accept': True})
-        if self.message.user.is_authenticated:
-            # Get the trips associated with the user (as a driver or a rider).
-            # Add the list of trip NKs to the user's channel session data.
-            trip_nks = list(self.user_trip_nks())
-            self.message.channel_session['trip_nks'] = trip_nks
+    async def connect(self):
+        user = self.scope['user']
+        if user.is_anonymous:
+            await self.close()
+        else:
+            await self.accept()
+        channel_groups = []
+        user_group = await self._get_user_group(self.scope['user'])
+        if user_group == 'driver':
+            channel_groups.append(self.channel_layer.group_add(group='drivers', channel=self.channel_name))
+        self.trips = set(await self._get_trips(self.scope['user']))
+        for trip in self.trips:
+            channel_groups.append(self.channel_layer.group_add(group=trip, channel=self.channel_name))
+        asyncio.gather(*channel_groups)
 
-            # Add the user's reply channel to each trip group.
-            for trip_nk in trip_nks:
-                Group(trip_nk).add(self.message.reply_channel)
+    async def receive_json(self, content, **kwargs):
+        message_type = content.get('type')
+        if message_type == 'create.trip':
+            await self.create_trip(content)
+        elif message_type == 'update.trip':
+            await self.update_trip(content)
+        else:
+            await self.echo_message(content)
 
-    def disconnect(self, message, **kwargs):
-        # Remove the user's reply channel from each associated trip group.
-        if 'trip_nks' in message.channel_session:
-            for trip_nk in message.channel_session['trip_nks']:
-                Group(trip_nk).discard(message.reply_channel)
+    async def echo_message(self, event):
+        await self.send_json(event)
 
+    async def create_trip(self, event):
+        trip = await self._create_trip(event.get('data'))
+        trip_data = TripSerializer(trip).data
+        await self.channel_layer.group_send(group='drivers', message={
+            'type': 'echo.message',
+            'data': trip_data
+        })
+        if trip.nk not in self.trips:
+            self.trips.add(trip.nk)
+            await self.channel_layer.group_add(group=trip.nk, channel=self.channel_name)
+        await self.send_json({
+            'type': 'MESSAGE',
+            'data': trip_data
+        })
 
-class DriverConsumer(TripConsumer):
-    groups = ['drivers']
+    async def update_trip(self, event):
+        trip = await self._update_trip(event.get('data'))
+        trip_data = TripSerializer(trip).data
+        await self.channel_layer.group_send(group=trip.nk, message={
+            'type': 'echo.message',
+            'data': trip_data
+        })
+        if trip.nk not in self.trips:
+            self.trips.add(trip.nk)
+            await self.channel_layer.group_add(group=trip.nk, channel=self.channel_name)
+        await self.send_json({
+            'type': 'MESSAGE',
+            'data': trip_data
+        })
 
-    def user_trip_nks(self):
-        return self.message.user.trips_as_driver.exclude(
-            status=Trip.COMPLETED).only('nk').values_list('nk', flat=True)
+    async def disconnect(self, code):
+        channel_groups = [
+            self.channel_layer.group_discard(group=trip, channel=self.channel_name)
+            for trip in self.trips
+        ]
+        user_group = await self._get_user_group(self.scope['user'])
+        if user_group == 'driver':
+            channel_groups.append(
+                self.channel_layer.group_discard(group='drivers', channel=self.channel_name)
+            )
+        asyncio.gather(*channel_groups)
+        self.trips.clear()
+        await super().disconnect(code)
 
-    def connect(self, message, **kwargs):
-        super().connect(message, **kwargs)
-
-        # Add all drivers to a special group.
-        Group('drivers').add(self.message.reply_channel)
-
-    def receive(self, content, **kwargs):
-        # Find an existing trip by its NK.
-        trip = Trip.objects.get(nk=content.get('nk'))
-
-        # Update the trip using the request data.
-        serializer = TripSerializer(data=content)
-        serializer.is_valid(raise_exception=True)
-        trip = serializer.update(trip, serializer.validated_data)
-
-        # Add the trip NK to the driver's channel session.
-        self.message.channel_session['trip_nks'].append(trip.nk)
-
-        # Add the user's reply channel to the trip group.
-        Group(trip.nk).add(self.message.reply_channel)
-
-        # Send the serialized trip data to everyone in the trip group.
-        trips_data = TripSerializer(trip).data
-        self.group_send(name=trip.nk, content=trips_data)
-
-
-class RiderConsumer(TripConsumer):
-    def user_trip_nks(self):
-        # Find all active trips for the rider.
-        return self.message.user.trips_as_rider.exclude(
-            status=Trip.COMPLETED).only('nk').values_list('nk', flat=True)
-
-    def receive(self, content, **kwargs):
-        # Create a trip using the data passed in the request.
+    @database_sync_to_async
+    def _create_trip(self, content):
         serializer = TripSerializer(data=content)
         serializer.is_valid(raise_exception=True)
         trip = serializer.create(serializer.validated_data)
+        return trip
 
-        # Add the new trip NK to the rider's channel session.
-        self.message.channel_session['trip_nks'].append(trip.nk)
+    @database_sync_to_async
+    def _get_trips(self, user):
+        if not user.is_authenticated:
+            raise Exception('User is not authenticated.')
+        user_groups = user.groups.values_list('name', flat=True)
+        if 'driver' in user_groups:
+            return user.trips_as_driver.exclude(status=Trip.COMPLETED).only('nk').values_list('nk', flat=True)
+        else:
+            return user.trips_as_rider.exclude(status=Trip.COMPLETED).only('nk').values_list('nk', flat=True)
 
-        # Add the user's reply channel to the new trip group.
-        Group(trip.nk).add(self.message.reply_channel)
+    @database_sync_to_async
+    def _get_user_group(self, user):
+        if not user.is_authenticated:
+            raise Exception('User is not authenticated.')
+        return user.groups.first().name
 
-        # Send the serialized trip data to everyone in the trip group.
-        trips_data = TripSerializer(trip).data
-        self.group_send(name=trip.nk, content=trips_data)
-
-        # Send trip request to all drivers.
-        self.group_send(name='drivers', content=trips_data)
+    @database_sync_to_async
+    def _update_trip(self, content):
+        instance = Trip.objects.get(nk=content.get('nk'))
+        serializer = TripSerializer(data=content)
+        serializer.is_valid(raise_exception=True)
+        trip = serializer.update(instance, content)
+        return trip

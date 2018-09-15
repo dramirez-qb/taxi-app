@@ -6,8 +6,8 @@ from channels.layers import get_channel_layer
 from channels.testing import WebsocketCommunicator
 from nose.tools import assert_equal, assert_is_none, assert_is_not_none, assert_true
 import pytest
-from trip.models import Trip
-from taxi.routing import application
+from example.models import Trip
+from example_taxi.routing import application
 
 
 @database_sync_to_async

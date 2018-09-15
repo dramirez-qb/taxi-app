@@ -6,7 +6,7 @@ from PIL import Image
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient, APITestCase
-from trip.models import Trip
+from example.models import Trip
 
 PASSWORD = 'pAssw0rd!'
 
@@ -78,7 +78,7 @@ class HttpTripTest(APITestCase):
             Trip.objects.create(pick_up_address='B', drop_off_address='C', rider=self.user),
             Trip.objects.create(pick_up_address='C', drop_off_address='D')
         ]
-        response = self.client.get(reverse('trip:trip_list'))
+        response = self.client.get(reverse('example:trip_list'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         exp_trip_nks = [trip.nk for trip in trips[0:2]]
         act_trip_nks = [trip.get('nk') for trip in response.data]
