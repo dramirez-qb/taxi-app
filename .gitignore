@@ -97,3 +97,5 @@ bower_components/
 node_modules/
 .idea/
 media/
+.pytest_cache/
+*.rdb
