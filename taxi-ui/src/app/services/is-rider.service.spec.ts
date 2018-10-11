@@ -1,5 +1,5 @@
 import { IsRider } from './is-rider.service';
-import { UserFactory } from '../tests/factories';
+import { UserFactory } from '../testing/factories';
 
 describe('IsRider', () => {
   it('should allow a rider to access a route', () => {

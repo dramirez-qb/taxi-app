@@ -6,11 +6,12 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
 import { AuthService } from '../../services/auth.service';
-import { UserFactory } from '../../tests/factories';
+import { UserFactory } from '../../testing/factories';
 import { LandingComponent } from './landing.component';
 
-xdescribe('LandingComponent', () => {
+describe('LandingComponent', () => {
   let logOutButton: DebugElement;
   let component: LandingComponent;
   let fixture: ComponentFixture<LandingComponent>;

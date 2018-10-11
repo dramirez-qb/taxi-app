@@ -1,21 +1,20 @@
-import { Component, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ToastrService } from 'ngx-toastr';
 import { Trip, TripService } from '../../services/trip.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-rider-dashboard',
   templateUrl: './rider-dashboard.component.html'
 })
-export class RiderDashboardComponent implements OnDestroy, OnInit {
+export class RiderDashboardComponent implements OnInit, OnDestroy {
   messages: Subscription;
   trips: Trip[];
   constructor(
     private route: ActivatedRoute,
     private tripService: TripService,
-    private toastr: ToastrService,
-    private viewContainerRef: ViewContainerRef
+    private toastr: ToastrService
   ) {}
   get currentTrips(): Trip[] {
     return this.trips.filter(trip => {
@@ -40,6 +39,9 @@ export class RiderDashboardComponent implements OnDestroy, OnInit {
     this.trips = this.trips.filter(thisTrip => thisTrip.id !== trip.id);
     this.trips.push(trip);
   }
+  ngOnDestroy(): void {
+    this.messages.unsubscribe();
+  }
   updateToast(trip: Trip): void {
     if (trip.status === 'STARTED') {
       this.toastr.info(`Driver ${trip.driver.username} is coming to pick you up.`);
@@ -48,8 +50,5 @@ export class RiderDashboardComponent implements OnDestroy, OnInit {
     } else if (trip.status === 'COMPLETED') {
       this.toastr.info(`Driver ${trip.driver.username} has dropped you off.`);
     }
-  }
-  ngOnDestroy(): void {
-    this.messages.unsubscribe();
   }
 }

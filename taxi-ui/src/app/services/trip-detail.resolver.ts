@@ -3,10 +3,12 @@ import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/r
 import { Observable } from 'rxjs';
 import { Trip, TripService } from '../services/trip.service';
 
-@Injectable()
-export class TripListResolver implements Resolve<Trip[]> {
+@Injectable({
+  providedIn: 'root'
+})
+export class TripDetailResolver implements Resolve<Trip> {
   constructor(private tripService: TripService) {}
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Trip[]> {
-    return this.tripService.getTrips();
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Trip> {
+    return this.tripService.getTrip(route.params.nk);
   }
 }

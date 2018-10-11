@@ -1,1 +1,1 @@
-xdescribe('AppComponent', () => {});
+describe('AppComponent', () => {});

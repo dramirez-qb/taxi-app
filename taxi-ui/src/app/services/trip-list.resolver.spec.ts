@@ -1,7 +1,7 @@
 import { Observable, of } from 'rxjs';
 import { Trip } from '../services/trip.service';
 import { TripListResolver } from './trip-list.resolver';
-import { TripFactory } from '../tests/factories';
+import { TripFactory } from '../testing/factories';
 
 describe('TripListResolver', () => {
   it('should resolve a list of trips', () => {

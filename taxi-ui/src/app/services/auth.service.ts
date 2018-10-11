@@ -12,6 +12,7 @@ export class User {
     public group?: string,
     public photo?: any
   ) {}
+
   static create(data: any): User {
     return new User(
       data.id,
@@ -22,32 +23,37 @@ export class User {
       data.photo
     );
   }
+
   static getUser(): User {
-    const userData: string = localStorage.getItem('taxi.user');
+    const userData = localStorage.getItem('taxi.user');
     if (userData) {
       return User.create(JSON.parse(userData));
     }
     return null;
   }
-  static isDriver(): boolean {
-    const user: User = User.getUser();
-    if (user === null) {
-      return false;
-    }
-    return user.group === 'driver';
-  }
+
   static isRider(): boolean {
-    const user: User = User.getUser();
+    const user = User.getUser();
     if (user === null) {
       return false;
     }
     return user.group === 'rider';
   }
+
+  static isDriver(): boolean {
+    const user = User.getUser();
+    if (user === null) {
+      return false;
+    }
+    return user.group === 'driver';
+  }
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
-  private BASE_URL = 'http://localhost:8000/api';
+  private BASE_URL = '/api';
   constructor(private http: HttpClient) {}
   signUp(
     username: string,
@@ -58,7 +64,7 @@ export class AuthService {
     photo: any
   ): Observable<User> {
     const url = `${this.BASE_URL}/sign_up/`;
-    const formData: FormData = new FormData();
+    const formData = new FormData();
     formData.append('username', username);
     formData.append('first_name', first_name);
     formData.append('last_name', last_name);
@@ -68,12 +74,14 @@ export class AuthService {
     formData.append('photo', photo);
     return this.http.request<User>('POST', url, {body: formData});
   }
+
   logIn(username: string, password: string): Observable<User> {
     const url = `${this.BASE_URL}/log_in/`;
     return this.http.post<User>(url, {username, password}).pipe(
       tap(user => localStorage.setItem('taxi.user', JSON.stringify(user)))
     );
   }
+
   logOut(): Observable<any> {
     const url = `${this.BASE_URL}/log_out/`;
     return this.http.post(url, null).pipe(

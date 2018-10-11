@@ -1,1 +1,1 @@
-xdescribe('RiderComponent', () => {});
+describe('RiderComponent', () => {});

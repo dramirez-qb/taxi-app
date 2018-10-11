@@ -1,6 +1,6 @@
-import * as faker from 'faker';
 import { User } from '../services/auth.service';
 import { Trip } from '../services/trip.service';
+import * as faker from 'faker';
 
 export class UserFactory {
   static create(data?: Object): User {

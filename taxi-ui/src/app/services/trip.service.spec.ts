@@ -1,7 +1,10 @@
-import { HttpClientTestingModule, HttpTestingController, TestRequest } from '@angular/common/http/testing';
+import {
+  HttpClientTestingModule, HttpTestingController, TestRequest
+} from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Trip, TripService } from './trip.service';
-import { TripFactory } from '../tests/factories';
+
+import { TripService, Trip } from './trip.service';
+import { TripFactory } from '../testing/factories';
 
 describe('TripService', () => {
   let tripService: TripService;
@@ -12,16 +15,17 @@ describe('TripService', () => {
       imports: [
         HttpClientTestingModule
       ],
-      providers: [
-        TripService
-      ]
+      providers: [ TripService ]
     });
     tripService = TestBed.get(TripService);
     httpMock = TestBed.get(HttpTestingController);
   });
 
   it('should allow a user to get a list of trips', () => {
-    const tripData = [TripFactory.create(), TripFactory.create()];
+    const tripData = [
+      TripFactory.create(),
+      TripFactory.create()
+    ];
     tripService.getTrips().subscribe(trips => {
       expect(trips).toEqual(tripData);
     });
@@ -31,12 +35,14 @@ describe('TripService', () => {
 
   it('should allow a user to create a trip', () => {
     tripService.webSocket = jasmine.createSpyObj('webSocket', ['next']);
-    const trip: Trip = TripFactory.create();
-    tripService.createTrip(trip);
-    expect(tripService.webSocket.next).toHaveBeenCalledWith({
-      type: 'create.trip',
-      data: trip
-    });
+      const trip: Trip = TripFactory.create();
+      tripService.createTrip(trip);
+      expect(tripService.webSocket.next).toHaveBeenCalledWith({
+        type: 'create.trip',
+        data: {
+          ...trip, rider: trip.rider.id
+        }
+      });
   });
 
   it('should allow a user to get a trip by NK', () => {
@@ -54,7 +60,9 @@ describe('TripService', () => {
     tripService.updateTrip(trip);
     expect(tripService.webSocket.next).toHaveBeenCalledWith({
       type: 'update.trip',
-      data: trip
+      data: {
+        ...trip, driver: trip.driver.id, rider: trip.rider.id
+      }
     });
   });
 
