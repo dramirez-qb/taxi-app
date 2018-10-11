@@ -5,9 +5,10 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+
 import { AuthService } from '../../services/auth.service';
-import { UserFactory } from '../../tests/factories';
-import { LogInComponent } from './log-in.component';
+import { UserFactory } from '../../testing/factories';
+import { LogInComponent } from '../log-in/log-in.component';
 
 describe('LogInComponent', () => {
   let component: LogInComponent;

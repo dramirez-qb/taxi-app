@@ -1,5 +1,5 @@
 # base image
-FROM node:9.5
+FROM node:10.11
 
 # install chrome
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -

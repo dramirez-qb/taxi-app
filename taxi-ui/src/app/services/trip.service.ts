@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { WebSocketSubject } from 'rxjs/webSocket';
@@ -20,6 +20,7 @@ export class Trip {
   ) {
     this.otherUser = User.isRider() ? this.driver : this.rider;
   }
+
   static create(data: any): Trip {
     return new Trip(
       data.id,
@@ -35,9 +36,11 @@ export class Trip {
   }
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class TripService {
-  private BASE_URL = 'http://localhost:8000/api';
+  private BASE_URL = '/api';
   webSocket: WebSocketSubject<any>;
   messages: Observable<any>;
   constructor(
@@ -45,7 +48,7 @@ export class TripService {
   ) {}
   connect(): void {
     if (!this.webSocket || this.webSocket.closed) {
-      this.webSocket = new WebSocketSubject(`ws://localhost:8000/taxi/`);
+      this.webSocket = new WebSocketSubject(`ws://localhost:8080/taxi/`);
       this.messages = this.webSocket.pipe(share());
       this.messages.subscribe(message => console.log(message));
     }
@@ -59,7 +62,9 @@ export class TripService {
     this.connect();
     const message: any = {
       type: 'create.trip',
-      data: trip
+      data: {
+        ...trip, rider: trip.rider.id
+      }
     };
     this.webSocket.next(message);
   }
@@ -72,7 +77,9 @@ export class TripService {
     this.connect();
     const message: any = {
       type: 'update.trip',
-      data: trip
+      data: {
+        ...trip, driver: trip.driver.id, rider: trip.rider.id
+      }
     };
     this.webSocket.next(message);
   }

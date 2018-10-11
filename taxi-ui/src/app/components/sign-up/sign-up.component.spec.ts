@@ -5,8 +5,9 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule } from '@angular/forms';
+
 import { AuthService } from '../../services/auth.service';
-import { UserFactory } from '../../tests/factories';
+import { UserFactory } from '../../testing/factories';
 import { SignUpComponent } from './sign-up.component';
 
 describe('SignUpComponent', () => {

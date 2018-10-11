@@ -1,5 +1,5 @@
 import { IsDriver } from './is-driver.service';
-import { UserFactory } from '../tests/factories';
+import { UserFactory } from '../testing/factories';
 
 describe('IsDriver', () => {
   it('should allow a driver to access a route', () => {

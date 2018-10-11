@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from '../../services/auth.service';
 import { GoogleMapsService } from '../../services/google-maps.service';
+import { User } from '../../services/auth.service';
 import { Trip, TripService } from '../../services/trip.service';
 
 class Marker {
@@ -14,15 +14,14 @@ class Marker {
 
 @Component({
   selector: 'app-rider-request',
-  templateUrl: './rider-request.component.html',
-  styleUrls: ['./rider-request.component.css']
+  templateUrl: './rider-request.component.html'
 })
 export class RiderRequestComponent implements OnInit {
+  trip: Trip = new Trip();
   lat = 0;
   lng = 0;
   zoom = 13;
   markers: Marker[];
-  trip: Trip = new Trip();
   constructor(
     private googleMapsService: GoogleMapsService,
     private router: Router,
@@ -45,7 +44,10 @@ export class RiderRequestComponent implements OnInit {
     this.router.navigateByUrl('/rider');
   }
   onUpdate(): void {
-    if (!!this.trip.pick_up_address && !!this.trip.drop_off_address) {
+    if (
+      !!this.trip.pick_up_address &&
+      !!this.trip.drop_off_address
+    ) {
       this.googleMapsService.directions(
         this.trip.pick_up_address,
         this.trip.drop_off_address
@@ -66,7 +68,7 @@ export class RiderRequestComponent implements OnInit {
             label: 'B'
           }
         ];
-      } );
+      });
     }
   }
 }

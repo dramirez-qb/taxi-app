@@ -2,7 +2,7 @@ import { ActivatedRouteSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Trip } from '../services/trip.service';
 import { TripDetailResolver } from './trip-detail.resolver';
-import { TripFactory } from '../tests/factories';
+import { TripFactory } from '../testing/factories';
 
 describe('TripDetailResolver', () => {
   it('should resolve a trip', () => {
