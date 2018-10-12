@@ -20,7 +20,7 @@ export class User {
       data.first_name,
       data.last_name,
       data.group,
-      data.photo
+      `/media/${data.photo}`
     );
   }
 

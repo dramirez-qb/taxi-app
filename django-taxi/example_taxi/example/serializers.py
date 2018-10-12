@@ -10,7 +10,7 @@ from .models import Trip
 class UserSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
-    photo = serializers.SerializerMethodField()
+    photo = serializers.ImageField(allow_empty_file=True, use_url=False)
     group = serializers.CharField()
 
     def validate(self, data):
@@ -30,11 +30,6 @@ class UserSerializer(serializers.ModelSerializer):
         user.groups.add(group)
         user.save()
         return user
-
-    def get_photo(self, obj):
-        if not obj.photo:
-            return None
-        return str(PurePath(settings.MEDIA_URL, obj.photo.name))
 
     class Meta:
         model = get_user_model()
